@@ -5,10 +5,16 @@ import com.demo.DBPBackend.propietario.domain.Propietario;
 import com.demo.DBPBackend.ubicacion.domain.Ubicacion;
 import com.demo.DBPBackend.valoracion.domain.Valoracion;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.security.DrbgParameters;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 public class Restaurante {
 

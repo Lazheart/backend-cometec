@@ -4,7 +4,13 @@ import com.demo.DBPBackend.cliente.domain.Cliente;
 import com.demo.DBPBackend.valoracion.domain.Valoracion;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 public class Comentario {
 
@@ -21,6 +27,6 @@ public class Comentario {
     private Valoracion valoracion;
 
     @ManyToOne
-    @JoinColumn(name = "usuarioId")
-    private Cliente clientes;
+    @JoinColumn(name = "clienteId")
+    private Cliente cliente;
 }

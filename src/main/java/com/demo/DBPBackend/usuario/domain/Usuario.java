@@ -3,10 +3,15 @@ package com.demo.DBPBackend.usuario.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class Usuario {
 
     @Id

@@ -1,4 +1,7 @@
 package com.demo.DBPBackend.propietario.infrastructure;
 
-public interface PropietarioRepository {
+import com.demo.DBPBackend.propietario.domain.Propietario;
+import com.demo.DBPBackend.usuario.infrastructure.BaseUsuarioRepository;
+
+public interface PropietarioRepository extends BaseUsuarioRepository<Propietario> {
 }
