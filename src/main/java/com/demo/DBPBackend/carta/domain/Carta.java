@@ -1,10 +1,12 @@
 package com.demo.DBPBackend.carta.domain;
 
+import com.demo.DBPBackend.plato.domain.Plato;
 import com.demo.DBPBackend.restaurante.domain.Restaurante;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CurrentTimestamp;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 public class Carta {
@@ -19,5 +21,6 @@ public class Carta {
     @JoinColumn(name = "restaurante_id")
     private Restaurante restaurante;
 
-    //Considerar si es necesario agregar una seccion de platos
+    @OneToMany(mappedBy = "carta", cascade = CascadeType.ALL)
+    private List<Plato> platos;
 }
