@@ -1,4 +1,7 @@
 package com.demo.DBPBackend.cliente.infrastructure;
 
-public interface ClienteRepository {
+import com.demo.DBPBackend.cliente.domain.Cliente;
+import com.demo.DBPBackend.usuario.infrastructure.BaseUsuarioRepository;
+
+public interface ClienteRepository extends BaseUsuarioRepository<Cliente> {
 }
