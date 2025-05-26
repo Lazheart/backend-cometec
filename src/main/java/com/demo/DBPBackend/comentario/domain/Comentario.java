@@ -27,6 +27,6 @@ public class Comentario {
     private Valoracion valoracion;
 
     @ManyToOne
-    @JoinColumn(name = "usuarioId")
-    private Cliente clientes;
+    @JoinColumn(name = "clienteId")
+    private Cliente cliente;
 }

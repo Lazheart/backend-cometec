@@ -42,6 +42,6 @@ public class Valoracion {
     @JoinColumn(name = "restauranteId")
     private Restaurante restaurante;
 
-    @OneToMany(mappedBy = "reseña", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "valoracion", cascade = CascadeType.ALL)
     private List<Comentario> comentarios;
 }
