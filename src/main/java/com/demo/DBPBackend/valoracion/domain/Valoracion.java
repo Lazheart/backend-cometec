@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.CurrentTimestamp;
 
 import java.time.LocalDate;
@@ -31,7 +32,8 @@ public class Valoracion {
     @NotBlank
     private Integer calificacion;
 
-    @CurrentTimestamp
+    @CreationTimestamp
+    @Column(updatable = false)
     private LocalDate fecha;
 
     @ManyToOne
