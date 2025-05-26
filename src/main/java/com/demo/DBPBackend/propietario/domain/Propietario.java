@@ -20,7 +20,7 @@ public class Propietario extends Usuario {
     private TipoDocumento tipoDocumento;
 
     @Column(length = 15, unique = true, nullable = false)
-    private Integer numeroDocumento;
+    private String numeroDocumento;
 
     @OneToMany(mappedBy = "propietario")
     private List<Restaurante> restaurantes;
