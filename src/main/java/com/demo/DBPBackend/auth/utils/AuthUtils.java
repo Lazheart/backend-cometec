@@ -23,19 +23,18 @@ public class AuthUtils {
     public boolean isAdmin() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String username = userDetails.getUsername();
-        User user = userService.findByEmail(username);
+        String email = userDetails.getUsername();
+        User user = userService.findByEmail(email);
         return user.getRole().equals(Role.ADMIN);
     }
 
     public boolean isAdminOrResourceOwner(Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String username = userDetails.getUsername();
-        User user = userService.findByEmail(username);
+        String email = userDetails.getUsername();
+        User user = userService.findByEmail(email);
         return user.getId().equals(id) || user.getRole().equals(Role.ADMIN);
     }
-
     public String getCurrentUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         try {
