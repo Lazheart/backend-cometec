@@ -1,14 +1,12 @@
 package com.demo.DBPBackend.carta.domain;
 
 import com.demo.DBPBackend.plato.domain.Plato;
-import com.demo.DBPBackend.restaurante.domain.Restaurante;
+import com.demo.DBPBackend.restaurant.domain.Restaurant;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CurrentTimestamp;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -25,7 +23,7 @@ public class Carta {
 
     @OneToOne
     @JoinColumn(name = "restaurante_id")
-    private Restaurante restaurante;
+    private Restaurant restaurant;
 
     @OneToMany(mappedBy = "carta", cascade = CascadeType.ALL)
     private List<Plato> platos;
