@@ -40,9 +40,9 @@ public class Review {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "restauranteId")
+    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
-    @OneToMany(mappedBy = "valoracion", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "revierw", cascade = CascadeType.ALL)
     private List<Comments> comments;
 }

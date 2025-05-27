@@ -69,7 +69,7 @@ public class User implements UserDetails {
     @JoinTable(
             name = "user_favorite_restaurants",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "restaurante_id")
+            inverseJoinColumns = @JoinColumn(name = "restaurant_id")
     )
     private List<Restaurant> favouriteRestaurants;
 

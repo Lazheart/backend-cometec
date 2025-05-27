@@ -1,6 +1,5 @@
 package com.demo.DBPBackend.comentario.domain;
 
-import com.demo.DBPBackend.cliente.domain.Cliente;
 import com.demo.DBPBackend.user.domain.User;
 import com.demo.DBPBackend.review.domain.Review;
 import jakarta.persistence.*;
@@ -13,6 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
+@Table(name = "comments")
 public class Comments {
 
     @Id
@@ -24,10 +24,10 @@ public class Comments {
     private String comentario;
 
     @ManyToOne
-    @JoinColumn(name = "valoracionId")
+    @JoinColumn(name = "review_id")
     private Review review;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
-    private User cliente;
+    @JoinColumn(name = "user_id")
+    private User user;
 }
