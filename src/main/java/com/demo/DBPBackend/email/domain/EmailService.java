@@ -33,7 +33,7 @@ public class EmailService {
 
         helper.setTo(to);
         helper.setText(process, true);
-        helper.setSubject("Bienvenido a la experiencia con Mure!");
+        helper.setSubject("Bienvenido a ComeTec!!!");
 
         mailSender.send(message);
     }
