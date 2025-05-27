@@ -4,9 +4,11 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.demo.DBPBackend.user.domain.UserService;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,18 +29,18 @@ public class JwtService {
         return JWT.decode(token).getSubject();
     }
 
-    public String generateToken(UserDetails data){
-        Date now = new Date();
-        Date expiration = new Date(now.getTime() + 1000 * 60 * 60 * 10);
-
-        Algorithm algorithm = Algorithm.HMAC256(secret);
+    public String generateToken(@NotNull UserDetails userDetails) {
+        String role = userDetails.getAuthorities().stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElse("ROLE_"); // Asegura el prefijo ROLE_
 
         return JWT.create()
-                .withSubject(data.getUsername())
-                .withClaim("role", data.getAuthorities().toArray()[0].toString())
-                .withIssuedAt(now)
-                .withExpiresAt(expiration)
-                .sign(algorithm);
+                .withSubject(userDetails.getUsername())
+                .withClaim("role", role.replace("ROLE_", "")) // Almacena sin prefijo
+                .withIssuedAt(new Date())
+                .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .sign(Algorithm.HMAC256(secret));
     }
 
     public void validateToken(String token, String userEmail) throws AuthenticationException {

@@ -32,7 +32,7 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @NotBlank
+    @NotNull(message = "El rol es obligatorio")
     private Role role;
 
     @Column(length = 30, nullable = false)

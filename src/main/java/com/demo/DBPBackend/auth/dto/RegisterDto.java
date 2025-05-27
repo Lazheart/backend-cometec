@@ -10,5 +10,5 @@ public class RegisterDto {
     private String name;
     private String lastname;
     private String phone;
-    private Role role;
+    private Role role = Role.USER;
 }
