@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -26,23 +27,37 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 
     @Override
-    public void doFilterInternal(HttpServletRequest servletRequest, HttpServletResponse servletResponse, FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = servletRequest.getHeader("Authorization");
-        String jwt;
-        String userEmail;
+    protected void doFilterInternal(@NotNull HttpServletRequest request,
+                                    @NotNull HttpServletResponse response,
+                                    @NotNull FilterChain filterChain)
+            throws ServletException, IOException {
 
-        if (!StringUtils.hasText(authHeader) || !StringUtils.startsWithIgnoreCase(authHeader, "Bearer")) {
-            filterChain.doFilter(servletRequest, servletResponse);
+        final String authHeader = request.getHeader("Authorization");
+
+        if (!StringUtils.hasText(authHeader) || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
             return;
         }
 
-        jwt = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(jwt);
+        final String jwt = authHeader.substring(7);
+        final String userEmail = jwtService.extractUsername(jwt);
 
         if (StringUtils.hasText(userEmail) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            jwtService.validateToken(jwt, userEmail);
+            try {
+                jwtService.validateToken(jwt, userEmail); // Debe hacer setAuthentication internamente
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Token inválido o expirado");
+                return;
+            }
         }
 
-        filterChain.doFilter(servletRequest, servletResponse);
+        filterChain.doFilter(request, response);
+        }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.startsWith("/auth/") || path.startsWith("/user/expo-token/");
     }
 }
