@@ -154,7 +154,5 @@ Seguir estos pasos asegura que el proyecto pueda ser lanzado de manera local.
 | GET    | `/dishes/{dishId}/ratings`        | Listar todas las valoraciones de un plato                   |
 | GET    | `/dishes/{dishId}/average-rating` | Obtener promedio de estrellas del plato                     |
 
-//este ultimo talvez no hay que meterlo
-
 ## Opiniones de los Dev  💥
 
