@@ -1,6 +1,6 @@
-package com.demo.DBPBackend.plato.domain;
+package com.demo.DBPBackend.dish.domain;
 
-import com.demo.DBPBackend.carta.domain.Carta;
+import com.demo.DBPBackend.menu.domain.Menu;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -13,23 +13,24 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-public class Plato {
+public class Dish {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPlato;
 
     @NotBlank
-    private String nombre;
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @NotBlank
+    @Column(nullable = false, length = 100)
+    private String description;
 
     @NotNull
     @DecimalMin("0.00")
-    private Double precio;
+    private Double price;
 
-    @NotNull
-    private Boolean disponibilidad;
-
-
-    @ManyToOne
-    @JoinColumn(name = "carta_id")
-    private Carta carta;
+    @OneToOne
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
 }

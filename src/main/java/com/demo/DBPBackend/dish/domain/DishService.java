@@ -1,9 +1,9 @@
-package com.demo.DBPBackend.carta.domain;
+package com.demo.DBPBackend.dish.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CartaService {
+public class DishService {
 }

@@ -44,7 +44,6 @@ public class Review {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     @OnDelete(action = OnDeleteAction.CASCADE)

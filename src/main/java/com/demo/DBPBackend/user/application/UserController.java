@@ -1,5 +1,6 @@
 package com.demo.DBPBackend.user.application;
 
+import com.demo.DBPBackend.comment.dto.CommentResponseDto;
 import com.demo.DBPBackend.restaurant.dto.RestaurantResponseDto;
 import com.demo.DBPBackend.review.dto.ReviewResponseDto;
 import com.demo.DBPBackend.user.domain.UserService;

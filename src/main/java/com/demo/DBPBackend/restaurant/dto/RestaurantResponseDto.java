@@ -1,6 +1,6 @@
 package com.demo.DBPBackend.restaurant.dto;
 
-import com.demo.DBPBackend.carta.domain.Carta;
+import com.demo.DBPBackend.menu.domain.Menu;
 import com.demo.DBPBackend.review.dto.ReviewResponseDto;
 import com.demo.DBPBackend.ubicacion.domain.Ubicacion;
 import com.demo.DBPBackend.user.dto.UserSummaryDto;
@@ -13,7 +13,7 @@ public class RestaurantResponseDto {
 
     private String nombre;
     private Ubicacion ubicacion;
-    private Carta carta;
+    private Menu menu;
     private List<ReviewResponseDto> reviews;
     private UserSummaryDto owner;
 

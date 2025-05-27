@@ -1,9 +1,9 @@
-package com.demo.DBPBackend.plato.domain;
+package com.demo.DBPBackend.menu.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class PlatoService {
+public class MenuService {
 }

@@ -1,6 +1,6 @@
 package com.demo.DBPBackend.restaurant.domain;
 
-import com.demo.DBPBackend.carta.domain.Carta;
+import com.demo.DBPBackend.menu.domain.Menu;
 import com.demo.DBPBackend.ubicacion.domain.Ubicacion;
 import com.demo.DBPBackend.review.domain.Review;
 import com.demo.DBPBackend.user.domain.User;
@@ -39,12 +39,12 @@ public class Restaurant {
     private Ubicacion ubicacion;
 
     @OneToOne(mappedBy = "restaurante", cascade = CascadeType.ALL)
-    private Carta carta;
+    private Menu menu;
 
     @OneToMany(mappedBy = "restaurante", cascade = CascadeType.ALL)
     private List<Review> valoraciones;
 
     @ManyToMany(mappedBy = "favouriteRestaurants")
-    private List<User> favouriteByUsers;
+    private List<User> favouritedBy;
 
 }

@@ -1,6 +1,6 @@
-package com.demo.DBPBackend.carta.domain;
+package com.demo.DBPBackend.menu.domain;
 
-import com.demo.DBPBackend.plato.domain.Plato;
+import com.demo.DBPBackend.dish.domain.Dish;
 import com.demo.DBPBackend.restaurant.domain.Restaurant;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,18 +13,15 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Entity
-public class Carta {
+public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCarta;
 
-    @Column(nullable = false, length = 128)
-    private String nombre;
-
     @OneToOne
-    @JoinColumn(name = "restaurante_id")
+    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
     @OneToMany(mappedBy = "carta", cascade = CascadeType.ALL)
-    private List<Plato> platos;
+    private List<Dish> dishes;
 }
