@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -16,12 +17,11 @@ import java.util.List;
 public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idCarta;
+    private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "restaurant_id")
+    @OneToOne(mappedBy = "menu", optional = false)
     private Restaurant restaurant;
 
-    @OneToMany(mappedBy = "carta", cascade = CascadeType.ALL)
-    private List<Dish> dishes;
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Dish> dishes = new ArrayList<>();
 }
