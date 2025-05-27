@@ -1,5 +1,7 @@
 package com.demo.DBPBackend.review.dto;
 
+import com.demo.DBPBackend.comment.dto.CommentRequestDto;
+import com.demo.DBPBackend.comment.dto.CommentResponseDto;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -15,4 +17,5 @@ public class ReviewResponseDto {
     private Integer likes;
     private String content;
     private Set<Long> likedByUserIds;
+    private List<CommentResponseDto> comments;
 }
