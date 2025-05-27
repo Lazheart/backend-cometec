@@ -1,6 +1,6 @@
 package com.demo.DBPBackend.restaurant.domain;
 
-import com.demo.DBPBackend.carta.domain.Carta;
+import com.demo.DBPBackend.menu.domain.Menu;
 import com.demo.DBPBackend.ubicacion.domain.Ubicacion;
 import com.demo.DBPBackend.review.domain.Review;
 import com.demo.DBPBackend.user.domain.User;
@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -28,23 +29,25 @@ public class Restaurant {
     // Rest1 - Distrito B
     @Column(length = 64, nullable = false, unique = true)
     @NotBlank
-    private String nombre;
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ubicacion_id")
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "ubicacion_id", nullable = false)
     private Ubicacion ubicacion;
 
-    @OneToOne(mappedBy = "restaurante", cascade = CascadeType.ALL)
-    private Carta carta;
 
-    @OneToMany(mappedBy = "restaurante", cascade = CascadeType.ALL)
-    private List<Review> valoraciones;
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "menu_id", nullable = false, unique = true)
+    private Menu menu;
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    private List<Review> valoraciones = new ArrayList<>();
 
     @ManyToMany(mappedBy = "favouriteRestaurants")
-    private List<User> favouriteByUsers;
+    private List<User> favouritedBy = new ArrayList<>();
 
 }

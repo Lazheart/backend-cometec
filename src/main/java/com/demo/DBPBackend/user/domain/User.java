@@ -1,6 +1,6 @@
 package com.demo.DBPBackend.user.domain;
 
-import com.demo.DBPBackend.comentario.domain.Comments;
+import com.demo.DBPBackend.comment.domain.Comment;
 import com.demo.DBPBackend.restaurant.domain.Restaurant;
 import com.demo.DBPBackend.review.domain.Review;
 import jakarta.persistence.*;
@@ -76,8 +76,12 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviews;
 
+    @ManyToMany(mappedBy = "likedBy", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Review> likedReviews;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Comments> comments;
+    private List<Comment> comments;
+
 
     @Transient
     private String rolePrefix = "ROLE_";
