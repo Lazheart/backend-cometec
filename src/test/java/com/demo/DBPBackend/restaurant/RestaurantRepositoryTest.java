@@ -134,5 +134,4 @@ public class RestaurantRepositoryTest {
 
         assertThat(restaurantRepository.findAll()).isEmpty();
     }
-
 }
