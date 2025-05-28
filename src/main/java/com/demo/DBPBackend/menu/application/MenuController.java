@@ -17,7 +17,7 @@ public class MenuController {
     private final MenuService menuService;
 
     // Crear carta para restaurante
-    @PreAuthorize("hasRole('ROLE_OWNER')")
+    @PreAuthorize("hasRole('OWNER')")
     @PostMapping("/restaurants/{restaurantId}")
     public ResponseEntity<Void> createMenu(@PathVariable Long restaurantId, @RequestBody MenuRequestDto dto) {
         dto.setRestaurantId(restaurantId);
@@ -26,14 +26,14 @@ public class MenuController {
     }
 
     // Ver carta específica
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_OWNER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<MenuResponseDto> getMenuById(@PathVariable Long id) {
         return ResponseEntity.ok(menuService.getMenuById(id));
     }
 
     // Actualizar carta
-    @PreAuthorize("hasRole('ROLE_OWNER')")
+    @PreAuthorize("hasRole('OWNER')")
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateMenu(@PathVariable Long id, @RequestBody MenuRequestDto dto) {
         menuService.updateMenu(id, dto);
@@ -41,7 +41,7 @@ public class MenuController {
     }
 
     // Eliminar carta
-    @PreAuthorize("hasRole('ROLE_OWNER')")
+    @PreAuthorize("hasRole('OWNER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMenu(@PathVariable Long id) {
         menuService.deleteMenu(id);

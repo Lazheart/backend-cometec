@@ -19,40 +19,40 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/restaurant/{restaurantId}")
     public ResponseEntity<List<ReviewResponseDto>> getReviewByRestaurantId(@PathVariable Long restaurantId) {
         return ResponseEntity.ok(reviewService.getReviewByRestaurantId(restaurantId));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<ReviewResponseDto> getReviewById(@PathVariable Long id) {
         return ResponseEntity.ok(reviewService.getReviewById(id));
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/all")
     public ResponseEntity<List<ReviewResponseDto>> getAllReviews() {
         List<ReviewResponseDto> response = reviewService.getAllReviews();
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/me")
     public ResponseEntity<List<ReviewResponseDto>> getReviewsByCurrentUser() {
         List<ReviewResponseDto> response = reviewService.getReviewsByCurrentUser();
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ReviewResponseDto>> getReviewsByUserId(@PathVariable Long userId) {
         List<ReviewResponseDto> response = reviewService.getReviewsByUserId(userId);
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     @PostMapping
     public ResponseEntity<Void> createReview(@ModelAttribute ReviewRequestDto reviewRequestDto){
         reviewService.createReview(reviewRequestDto);
@@ -60,33 +60,33 @@ public class ReviewController {
     }
 
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     @PatchMapping("/content/{id}")
     public ResponseEntity<Void> updateReviewContent(@PathVariable Long id, @RequestBody ReviewUpdateContentDto content) {
         reviewService.changeContent(id, content.getContent());
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     @PatchMapping("/dislike/{id}")
     public ResponseEntity<Void> dislikeReview(@PathVariable Long id) {
         reviewService.dislikeReview(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     @PatchMapping("/like/{id}")
     public ResponseEntity<Void> likeReview(@PathVariable Long id) {
         reviewService.likeReview(id);
         return ResponseEntity.noContent().build();
     }
-    
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
         reviewService.deleteReview(id);
         return ResponseEntity.noContent().build();
     }
-    
+
 }
