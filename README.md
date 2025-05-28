@@ -69,7 +69,7 @@ Seguir estos pasos asegura que el proyecto pueda ser lanzado de manera local.
 
 ## Diagrama Entidad Relaciom
 
-![ER Diagram](https://media.discordapp.net/attachments/1361535013195219014/1376429223975321634/image.png?ex=6835f3db&is=6834a25b&hm=3ed78f71243dbaeb446e36bee05b02af7d1f2dc3e5fbd083ef94a3cbaf745791&=&format=webp&quality=lossless&width=1137&height=1055)
+![ER Diagram]([https://media.discordapp.net/attachments/1361535013195219014/1376429223975321634/image.png?ex=6835f3db&is=6834a25b&hm=3ed78f71243dbaeb446e36bee05b02af7d1f2dc3e5fbd083ef94a3cbaf745791&=&format=webp&quality=lossless&width=1137&height=1055](https://media.discordapp.net/attachments/1361535013195219014/1377434326727135252/postgreslocalhost.png?ex=6838f32e&is=6837a1ae&hm=1fdf7444d006cd13cc70d59c00b8639f5d416603f01acc95250da3df2245d178&=&format=webp&quality=lossless&width=716&height=1421))
 
 
 ## Endpoints 🛣️
