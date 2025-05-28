@@ -1,4 +1,5 @@
-![image](https://github.com/user-attachments/assets/dadcd5ec-0d30-4d0f-bc88-38c1945cd7fa)# ComeTec Backend🍽️
+
+# ComeTec Backend🍽️
 
 ## Descripcion
 Backend para un sistema de gestión de restaurantes que permite a los clientes explorar restaurantes, dejar reseñas y comentarios, mientras que los propietarios pueden administrar sus restaurantes, cartas y platos. Incluye funcionalidades avanzadas como calificaciones, comentarios y gestión de menús.
