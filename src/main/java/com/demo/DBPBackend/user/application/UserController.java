@@ -20,56 +20,56 @@ public class UserController {
 
     private final UserService userService;
 
-    @PreAuthorize("hasRole('ROL_USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/me")
     public ResponseEntity<UserResponseDto> getMe() {return ResponseEntity.ok(userService.getMe());}
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUserById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     @PatchMapping("/update/me")
     public ResponseEntity<Void> updateUser(@ModelAttribute UserRequestDto updatedUser){
         userService.updateUser(updatedUser);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/favourites")
     public ResponseEntity<List<RestaurantResponseDto>> getFavouriteRestaurants() {
         return ResponseEntity.ok(userService.getFavouriteRestaurants());
     }
 
-    @PreAuthorize("hasRole('ROLE_OWNER')")
+    @PreAuthorize("hasRole('OWNER')")
     @GetMapping("/owned-restaurants")
     public ResponseEntity<List<RestaurantResponseDto>> getOwnedRestaurants() {
         return ResponseEntity.ok(userService.getOwnedRestaurants());
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/comments")
     public ResponseEntity<List<CommentResponseDto>> getUserComments() {
         return ResponseEntity.ok(userService.getUserComments());
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/reviews")
     public ResponseEntity<List<ReviewResponseDto>> getUserReviews() {
         return ResponseEntity.ok(userService.getUserReviews());
