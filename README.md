@@ -1,4 +1,3 @@
-[![Review Assignme
 # ComeTec Backend🍽️
 
 ## Descripcion
@@ -96,14 +95,14 @@ Seguir estos pasos asegura que el proyecto pueda ser lanzado de manera local.
 🍽️ Restaurante
 
 | Método | EndPoint                     | Descripción                                    |
-| ------ | ---------------------------- | ---------------------------------------------- |
+| ------ | ---------------------------- |------------------------------------------------|
 | GET    | `/restaurants`               | Listar todos los restaurantes                  |
 | GET    | `/restaurants/{id}`          | Obtener detalles de un restaurante             |
 | GET    | `/restaurants/{id}/reviews`  | Obtener reseñas del restaurante                |
 | GET    | `/restaurants/{id}/comments` | Obtener todos los comentarios del restaurante  |
 | GET    | `/restaurants/{id}/menu`     | Obtener carta del restaurante                  |
-| POST   | `/restaurants`               | Crear restaurante (solo para propietarios)     |
-| PUT    | `/restaurants/{id}`          | Actualizar datos del restaurante (propietario) |
+| POST   | `/restaurants`               | Actualizar datos del restaurante (propietario) |
+| PUT    | `/restaurants/{id}`          | Crear restaurante (solo para propietarios)     |
 | DELETE | `/restaurants/{id}`          | Eliminar restaurante                           |
 
 📝 Review (Reseñas)
@@ -153,6 +152,8 @@ Seguir estos pasos asegura que el proyecto pueda ser lanzado de manera local.
 | DELETE | `/ratings/{ratingId}`             | Eliminar valoración del plato (cliente)                     |
 | GET    | `/dishes/{dishId}/ratings`        | Listar todas las valoraciones de un plato                   |
 | GET    | `/dishes/{dishId}/average-rating` | Obtener promedio de estrellas del plato                     |
+
+//este ultimo talvez no hay que meterlo
 
 ## Opiniones de los Dev  💥
 
