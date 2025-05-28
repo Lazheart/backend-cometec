@@ -34,51 +34,56 @@ public class RestaurantRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-
-        //Creacion de usuario
+        // Crear usuario
         User owner = new User();
         owner.setName("Ana");
         owner.setLastname("Pérez");
         owner.setEmail("ana.perez@example.com");
         owner.setPassword("securePass123");
         owner.setPhone("999888777");
-        owner.setRole(Role.OWNER); // Asumiendo que tienes este enum
+        owner.setRole(Role.OWNER);
         owner.setCreatedAt(LocalDateTime.now());
         entityManager.persist(owner);
 
-        //Creación de la ubicación
+        // Crear ubicación
         Ubicacion ubicacion = new Ubicacion();
         ubicacion.setLongitud(12.0);
         ubicacion.setLatitud(-77.0);
         entityManager.persist(ubicacion);
 
-        //Creación de platos
+        // Crear restaurante (sin menú todavía)
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName("Restaurant1");
+        restaurant.setOwner(owner);
+        restaurant.setUbicacion(ubicacion);
+
+        // Crear menú y asignarlo al restaurante
+        Menu menu = new Menu();
+        menu.setDishes(new ArrayList<>());
+        menu.setRestaurant(restaurant);
+        restaurant.setMenu(menu);       // relación bidireccional
+
+        // Persistencia (solo del restaurante si usas cascade = ALL)
+        entityManager.persist(restaurant);
+
+        // Crear platos
         Dish dish1 = new Dish();
-        dish1.setDescription("Frist dish");
+        dish1.setDescription("First dish");
         dish1.setName("Dish1");
         dish1.setPrice(12.0);
+        dish1.setMenu(menu);
         entityManager.persist(dish1);
 
         Dish dish2 = new Dish();
         dish2.setDescription("Second dish");
         dish2.setName("Dish2");
         dish2.setPrice(24.0);
+        dish2.setMenu(menu);
         entityManager.persist(dish2);
 
-        //Creación del menú
-        Menu menu = new Menu();
-        menu.setDishes(new ArrayList<>());
+        // Agregar platos al menú
         menu.getDishes().add(dish1);
         menu.getDishes().add(dish2);
-        entityManager.persist(menu);
-
-        //Creacion del restaurante
-        Restaurant restaurant = new Restaurant();
-        restaurant.setName("Restaurant1");
-        restaurant.setOwner(owner);
-        restaurant.setUbicacion(ubicacion);
-        restaurant.setMenu(menu);
-        entityManager.persist(restaurant);
     }
 
     @Test
