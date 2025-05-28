@@ -93,5 +93,46 @@ public class RestaurantRepositoryTest {
         assertThat(all.get(0).getName()).isEqualTo("Restaurant1");
     }
 
+    @Test
+    public void testFindByName() {
+        var restaurant = restaurantRepository.findByName("Restaurant1");
+        assertThat(restaurant).isPresent();
+        assertThat(restaurant.get().getName()).isEqualTo("Restaurant1");
+    }
+
+    @Test
+    public void testRestaurantMenuAndDishes() {
+        var restaurant = restaurantRepository.findAll().get(0);
+
+        assertThat(restaurant.getMenu()).isNotNull();
+        assertThat(restaurant.getMenu().getDishes()).hasSize(2);
+        assertThat(restaurant.getMenu().getDishes())
+                .extracting(Dish::getName)
+                .containsExactlyInAnyOrder("Dish1", "Dish2");
+    }
+
+    @Test
+    public void testRestaurantOwner() {
+        var restaurant = restaurantRepository.findAll().get(0);
+        assertThat(restaurant.getOwner()).isNotNull();
+        assertThat(restaurant.getOwner().getName()).isEqualTo("Ana");
+    }
+
+    @Test
+    public void testRestaurantUbicacion() {
+        var restaurant = restaurantRepository.findAll().get(0);
+        assertThat(restaurant.getUbicacion()).isNotNull();
+        assertThat(restaurant.getUbicacion().getLatitud()).isEqualTo(-77.0);
+        assertThat(restaurant.getUbicacion().getLongitud()).isEqualTo(12.0);
+    }
+
+    @Test
+    public void testDeleteRestaurantCascadesToMenu() {
+        var restaurant = restaurantRepository.findAll().get(0);
+        restaurantRepository.delete(restaurant);
+        entityManager.flush();
+
+        assertThat(restaurantRepository.findAll()).isEmpty();
+    }
 
 }
