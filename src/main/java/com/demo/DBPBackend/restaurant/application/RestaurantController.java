@@ -23,42 +23,42 @@ public class RestaurantController {
     private final RestaurantService restaurantService;
 
     // Listar todos los restaurantes
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_OWNER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
     @GetMapping
     public ResponseEntity<List<RestaurantSummaryDto>> getAllRestaurants() {
         return ResponseEntity.ok(restaurantService.getAllRestaurants());
     }
 
     // Obtener detalles de un restaurante
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_OWNER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<RestaurantResponseDto> getRestaurantById(@PathVariable Long id) {
         return ResponseEntity.ok(restaurantService.getRestaurantById(id));
     }
 
     // Obtener reseñas del restaurante
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_OWNER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
     @GetMapping("/{id}/reviews")
     public ResponseEntity<List<ReviewResponseDto>> getRestaurantReviews(@PathVariable Long id) {
         return ResponseEntity.ok(restaurantService.getRestaurantReviews(id));
     }
 
     // Obtener comentarios del restaurante
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_OWNER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
     @GetMapping("/{id}/comments")
     public ResponseEntity<List<CommentResponseDto>> getRestaurantComments(@PathVariable Long id) {
         return ResponseEntity.ok(restaurantService.getRestaurantComments(id));
     }
 
     // Obtener carta del restaurante
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_OWNER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
     @GetMapping("/{id}/menu")
     public ResponseEntity<MenuResponseDto> getRestaurantMenu(@PathVariable Long id) {
         return ResponseEntity.ok(restaurantService.getRestaurantMenu(id));
     }
 
     // Crear restaurante (solo propietarios)
-    @PreAuthorize("hasRole('ROLE_OWNER')")
+    @PreAuthorize("hasRole('OWNER')")
     @PostMapping
     public ResponseEntity<Void> createRestaurant(@RequestBody RestaurantRequestDto dto) {
         restaurantService.createRestaurant(dto);
@@ -66,7 +66,7 @@ public class RestaurantController {
     }
 
     // Actualizar restaurante (propietario)
-    @PreAuthorize("hasRole('ROLE_OWNER')")
+    @PreAuthorize("hasRole('OWNER')")
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateRestaurant(@PathVariable Long id, @RequestBody RestaurantRequestDto dto) {
         restaurantService.updateRestaurant(id, dto);
@@ -74,7 +74,7 @@ public class RestaurantController {
     }
 
     // Eliminar restaurante
-    @PreAuthorize("hasRole('ROLE_OWNER')")
+    @PreAuthorize("hasRole('OWNER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRestaurant(@PathVariable Long id) {
         restaurantService.deleteRestaurant(id);
