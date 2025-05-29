@@ -41,7 +41,7 @@ Abre tu terminal y clona el Repositorio con el siguiente comando :
 
 4. **Corre la Aplicacion**
 
-   Ejecute `ComeTecApplication` para iniciar la aplicación. IntelliJ   manejará automáticamente las dependencias como se especifica en el archivo `pom.xml` ya que el proyecto usa Maven.
+   Ejecute `DbpBackendApplication` para iniciar la aplicación. IntelliJ   manejará automáticamente las dependencias como se especifica en el archivo `pom.xml` ya que el proyecto usa Maven.
 
 5. **Configura la Base de Datos**
 
@@ -60,8 +60,9 @@ Abre tu terminal y clona el Repositorio con el siguiente comando :
        container_name: proyecto-backend-dev
        restart: always
        environment:
-         POSTGRES_PASSWORD: postgres
-         POSTGRES_DB: database
+         POSTGRES_PASSWORD: password
+         POSTGRES_DB: postgres
+         POSTGRES_USER: postgres
        ports:
          - "5433:5432"
    ```
@@ -145,5 +146,8 @@ Seguir estos pasos asegura que el proyecto pueda ser lanzado de manera local.
 | GET    | `/dishes/{id}`           | Detalles del plato         |
 
 
-## Opiniones de los Dev  💥
+## POSTMAN Collections
+Esta colección de Postman contiene los diferentes endpoints REST de nuestra aplicación Spring Boot. Está diseñada para facilitar la prueba y validación de las funcionalidades principales, incluyendo la gestión de usuarios, operaciones CRUD, autenticación y cualquier otro servicio expuesto por el backend.
+
+(https://lazheart.postman.co/workspace/Lazheart's-Workspace~2eca68a4-0d71-4d01-88e7-ae8ef981f62c/collection/43513911-afc0fe12-815b-4a4c-9b70-2aca6cc83ae6?action=share&creator=45430589)
 
