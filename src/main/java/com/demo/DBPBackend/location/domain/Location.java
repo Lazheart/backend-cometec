@@ -1,5 +1,6 @@
 package com.demo.DBPBackend.location.domain;
 
+import com.demo.DBPBackend.restaurant.domain.Restaurant;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
+@Table(name = "locations")
 public class Location {
 
     @Id
@@ -23,5 +25,8 @@ public class Location {
     @NotNull
     @Column(nullable = false)
     private double longitud;
+
+    @OneToOne(mappedBy = "location")
+    private Restaurant restaurant;
 
 }

@@ -5,6 +5,7 @@ import com.demo.DBPBackend.comment.dto.CommentRequestDto;
 import com.demo.DBPBackend.comment.dto.CommentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/review/{reviewId}")
     public ResponseEntity<List<CommentResponseDto>> getCommentsByPostId(@PathVariable Long reviewId) {
         return ResponseEntity.ok(commentService.getCommentsByReviewId(reviewId));
