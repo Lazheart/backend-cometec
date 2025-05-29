@@ -1,10 +1,4 @@
-
-# ComeTec Backend🍽️: Administración de Restaurantes y Menús
-
-## CS20231 Desarrollo Basado en Plataformas
-
-## Introducción
-
+# ComeTec Backend🍽️
 
 ## Descripcion
 Backend para un sistema de gestión de restaurantes que permite a los clientes explorar restaurantes, dejar reseñas y comentarios, mientras que los propietarios pueden administrar sus restaurantes, cartas y platos. Incluye funcionalidades avanzadas como calificaciones, comentarios y gestión de menús.
@@ -16,29 +10,6 @@ Backend para un sistema de gestión de restaurantes que permite a los clientes e
 | Luciana Yangali Cáceres | Luciana-y          | [luciana.yangali@utec.edu.pe](mailto:luciana.yangali@utec.edu.pe)         |
 | Leonardo Montesinos     | LeonardoMontesinos | [leonardo.montesinos@utec.edu.pe](mailto:leonardo.montesinos@utec.edu.pe) |
 | Lucia Cartagena         | luciajcm           | [lucia.cartajena@utec.edu.pe](mailto:lucia.cartajena@utec.edu.pe)         |
-
-## Descripción
-Muchos restaurantes pequeños y medianos carecen de una solución digital personalizada que les permita interactuar directamente con sus clientes. Por un lado, los clientes no siempre tienen una manera clara y estructurada de calificar y comentar sus experiencias. Por otro lado, los dueños no tienen visibilidad clara de las opiniones de sus clientes ni herramientas que les permitan administrar eficientemente sus menús o disponibilidad de platos.
-
-## Justificación
-Ofrecer un backend robusto para este tipo de sistema ayuda a cubrir una necesidad real en el sector gastronómico: mejorar la experiencia del cliente y optimizar la gestión del restaurante. Al permitir que los usuarios dejen comentarios y califiquen los restaurantes, se crea un círculo virtuoso de retroalimentación que puede mejorar tanto el servicio como la reputación de los establecimientos. Además, la gestión dinámica del menú y platos facilita la adaptación rápida a la demanda y disponibilidad.
-
-## Descripción de la Solución
-- **Registro y gestión de usuarios:** Separación clara entre roles de cliente y propietario.
-- **Gestión de restaurantes:** Los propietarios pueden registrar su restaurante, incluyendo ubicación y carta asociada.
-- **Gestión de cartas y platos:** Permite a los propietarios crear una carta, agregar platos, y gestionar su disponibilidad.
-- **Sistema de reseñas:** Los clientes pueden calificar restaurantes con estrellas (0-5), lo que influye en una media de calificaciones.
-- **Comentarios en reseñas:** Los usuarios pueden comentar sobre las reseñas de otros, fomentando la interacción.
-
-## Tecnologías Utilizadas
-- **Lenguaje de programación:** Java
-- **Framework backend:** Spring Boot
-- **Base de datos:** PostgreSQL (posiblemente administrada con Docker y Testcontainers en entornos de desarrollo)
-- **ORM:** JPA (Hibernate)
-- **Control de versiones:** Git + GitHub
-- **Pruebas:** JUnit, Testcontainers (para pruebas de integración con la base de datos)
-- **Autenticación y autorización** Spring Security con control basado en roles
-- **Herramientas axuliares:** Postman(para pruebas de API)
 
 
 ## Prerequisites 🔧
@@ -97,21 +68,10 @@ Abre tu terminal y clona el Repositorio con el siguiente comando :
 
 Seguir estos pasos asegura que el proyecto pueda ser lanzado de manera local.
 
-## Modelo de Entidades
-
-### Diagrama Entidad Relacion
+## Diagrama Entidad Relaciom
 
 ![ER Diagram](https://media.discordapp.net/attachments/1361535013195219014/1377434326727135252/postgreslocalhost.png?ex=6838f32e&is=6837a1ae&hm=1fdf7444d006cd13cc70d59c00b8639f5d416603f01acc95250da3df2245d178&=&format=webp&quality=lossless&width=716&height=1421)
 
-### Entidades
-
-- **User:**
-- **Restaurant:**
-- **Menu:**
-- **Dish:**
-- **Location:**
-- **Review:**
-- **Comment:**
 
 ## Endpoints 🛣️
 📍 Location
@@ -184,25 +144,103 @@ Seguir estos pasos asegura que el proyecto pueda ser lanzado de manera local.
 | DELETE | `/dishes/{id}`           | Eliminar plato             |
 | GET    | `/dishes/{id}`           | Detalles del plato         |
 
-## Testing y Manejo de Errores
-
-### Tests Unitarios
-
-### Test Container
-
-## Medidas de Seguridad Implementadas
-
-## Eventos y Asincronía
-
-## GitHub
-
-
-
-## Conclusión
-
-## Apéndices
 
 ## POSTMAN Collections
 Esta colección de Postman contiene los diferentes endpoints REST de nuestra aplicación Spring Boot. Está diseñada para facilitar la prueba y validación de las funcionalidades principales, incluyendo la gestión de usuarios, operaciones CRUD, autenticación y cualquier otro servicio expuesto por el backend.
 
 (https://lazheart.postman.co/workspace/Lazheart's-Workspace~2eca68a4-0d71-4d01-88e7-ae8ef981f62c/collection/43513911-afc0fe12-815b-4a4c-9b70-2aca6cc83ae6?action=share&creator=45430589)
+
+## Medidas de Seguridad Implementadas
+✅ Autenticación y Autorización
+
+    JWT (JSON Web Token): Autenticación segura basada en tokens.
+
+    Gestión de Roles: Jerarquía de permisos → ADMIN > OWNER > USER.
+
+    Expiración de Tokens: Válidos por 10 horas.
+
+    Validación de Token: Verificada en cada solicitud.
+
+🔒 Control de Acceso
+
+    RBAC (Role-Based Access Control): Mediante anotaciones @PreAuthorize.
+
+    Ejemplo: Solo ADMIN puede acceder a endpoints sensibles, USER accede a su propio contexto.
+
+📋 Validación de Datos
+
+    Se utilizan anotaciones de Jakarta Bean Validation:
+
+        @NotNull, @NotBlank: Evitan nulos o vacíos.
+
+        @Size: Controla la longitud de cadenas.
+
+        @Email: Verifica formato de correos electrónicos.
+
+        @DecimalMin: Define valores numéricos mínimos.
+
+🔐 Cifrado
+
+    Contraseñas: Hasheadas con Spring Security (por ejemplo, BCryptPasswordEncoder).
+
+    JWT: Firmados con el algoritmo HMAC256.
+
+🛡️ Prevención de Vulnerabilidades
+
+    CSRF: Deshabilitado para APIs REST; el JWT ofrece protección.
+
+    XSS: Validación y sanitización de entradas habilitadas.
+
+    Inyección SQL: Evitada mediante JPA/Hibernate y consultas parametrizadas.
+
+⚙️ Otras Medidas
+
+    Sesiones Stateless: Sin estado del lado del servidor.
+
+    Headers de Seguridad: Aplicados en la configuración de seguridad.
+
+    CORS: Configuración específica para dominios permitidos. 
+
+## Eventos y Asincronía
+🛠️ Configuración Asíncrona
+
+    Habilitada globalmente con @EnableAsync.
+
+    Métodos anotados con @Async se ejecutan en segundo plano.
+
+📬 Eventos de Registro
+
+    Uso de eventos asíncronos para operaciones post-registro:
+
+        Envío de correos de bienvenida.
+
+        Registro de auditoría.
+
+⚡ Beneficios del Manejo Asíncrono
+
+    Rendimiento Mejorado:
+
+        Operaciones largas (como emails) no bloquean el flujo principal.
+
+        Procesamiento paralelo de tareas.
+
+    Casos de Uso:
+
+        Envío de correos.
+
+        Notificaciones.
+
+        Auditorías y logs.
+
+    Ventajas Clave:
+
+        Mejor experiencia de usuario.
+
+        Optimización de recursos del servidor.
+
+        Escalabilidad.
+
+        Desacoplamiento de lógica.
+
+        Tolerancia a fallos (errores en tareas asíncronas no afectan la ejecución principal).
+
