@@ -1,5 +1,10 @@
 
-# ComeTec Backend🍽️
+# ComeTec Backend🍽️: Administración de Restaurantes y Menús
+
+## CS20231 Desarrollo Basado en Plataformas
+
+## Introducción
+
 
 ## Descripcion
 Backend para un sistema de gestión de restaurantes que permite a los clientes explorar restaurantes, dejar reseñas y comentarios, mientras que los propietarios pueden administrar sus restaurantes, cartas y platos. Incluye funcionalidades avanzadas como calificaciones, comentarios y gestión de menús.
@@ -11,6 +16,29 @@ Backend para un sistema de gestión de restaurantes que permite a los clientes e
 | Luciana Yangali Cáceres | Luciana-y          | [luciana.yangali@utec.edu.pe](mailto:luciana.yangali@utec.edu.pe)         |
 | Leonardo Montesinos     | LeonardoMontesinos | [leonardo.montesinos@utec.edu.pe](mailto:leonardo.montesinos@utec.edu.pe) |
 | Lucia Cartagena         | luciajcm           | [lucia.cartajena@utec.edu.pe](mailto:lucia.cartajena@utec.edu.pe)         |
+
+## Descripción
+Muchos restaurantes pequeños y medianos carecen de una solución digital personalizada que les permita interactuar directamente con sus clientes. Por un lado, los clientes no siempre tienen una manera clara y estructurada de calificar y comentar sus experiencias. Por otro lado, los dueños no tienen visibilidad clara de las opiniones de sus clientes ni herramientas que les permitan administrar eficientemente sus menús o disponibilidad de platos.
+
+## Justificación
+Ofrecer un backend robusto para este tipo de sistema ayuda a cubrir una necesidad real en el sector gastronómico: mejorar la experiencia del cliente y optimizar la gestión del restaurante. Al permitir que los usuarios dejen comentarios y califiquen los restaurantes, se crea un círculo virtuoso de retroalimentación que puede mejorar tanto el servicio como la reputación de los establecimientos. Además, la gestión dinámica del menú y platos facilita la adaptación rápida a la demanda y disponibilidad.
+
+## Descripción de la Solución
+- **Registro y gestión de usuarios:** Separación clara entre roles de cliente y propietario.
+- **Gestión de restaurantes:** Los propietarios pueden registrar su restaurante, incluyendo ubicación y carta asociada.
+- **Gestión de cartas y platos:** Permite a los propietarios crear una carta, agregar platos, y gestionar su disponibilidad.
+- **Sistema de reseñas:** Los clientes pueden calificar restaurantes con estrellas (0-5), lo que influye en una media de calificaciones.
+- **Comentarios en reseñas:** Los usuarios pueden comentar sobre las reseñas de otros, fomentando la interacción.
+
+## Tecnologías Utilizadas
+- **Lenguaje de programación:** Java
+- **Framework backend:** Spring Boot
+- **Base de datos:** PostgreSQL (posiblemente administrada con Docker y Testcontainers en entornos de desarrollo)
+- **ORM:** JPA (Hibernate)
+- **Control de versiones:** Git + GitHub
+- **Pruebas:** JUnit, Testcontainers (para pruebas de integración con la base de datos)
+- **Autenticación y autorización** Spring Security con control basado en roles
+- **Herramientas axuliares:** Postman(para pruebas de API)
 
 
 ## Prerequisites 🔧
@@ -69,10 +97,21 @@ Abre tu terminal y clona el Repositorio con el siguiente comando :
 
 Seguir estos pasos asegura que el proyecto pueda ser lanzado de manera local.
 
-## Diagrama Entidad Relaciom
+## Modelo de Entidades
+
+### Diagrama Entidad Relacion
 
 ![ER Diagram](https://media.discordapp.net/attachments/1361535013195219014/1377434326727135252/postgreslocalhost.png?ex=6838f32e&is=6837a1ae&hm=1fdf7444d006cd13cc70d59c00b8639f5d416603f01acc95250da3df2245d178&=&format=webp&quality=lossless&width=716&height=1421)
 
+### Entidades
+
+- **User:**
+- **Restaurant:**
+- **Menu:**
+- **Dish:**
+- **Location:**
+- **Review:**
+- **Comment:**
 
 ## Endpoints 🛣️
 📍 Location
@@ -145,9 +184,25 @@ Seguir estos pasos asegura que el proyecto pueda ser lanzado de manera local.
 | DELETE | `/dishes/{id}`           | Eliminar plato             |
 | GET    | `/dishes/{id}`           | Detalles del plato         |
 
+## Testing y Manejo de Errores
+
+### Tests Unitarios
+
+### Test Container
+
+## Medidas de Seguridad Implementadas
+
+## Eventos y Asincronía
+
+## GitHub
+
+
+
+## Conclusión
+
+## Apéndices
 
 ## POSTMAN Collections
 Esta colección de Postman contiene los diferentes endpoints REST de nuestra aplicación Spring Boot. Está diseñada para facilitar la prueba y validación de las funcionalidades principales, incluyendo la gestión de usuarios, operaciones CRUD, autenticación y cualquier otro servicio expuesto por el backend.
 
 (https://lazheart.postman.co/workspace/Lazheart's-Workspace~2eca68a4-0d71-4d01-88e7-ae8ef981f62c/collection/43513911-afc0fe12-815b-4a4c-9b70-2aca6cc83ae6?action=share&creator=45430589)
-
