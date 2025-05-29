@@ -27,13 +27,13 @@ Para lanzar el proyecto de manera local , sigue estos pasos
 
 Abre tu terminal y clona el Repositorio con el siguiente comando :
   ```sh
-     git clone https://github.com/your-repo/restaurant-backend.git
+     git clone git@github.com:CS2031-DBP/proyecto-backend-metrodata.git
    ```
 2. **Navega al proyecto**
    Cambia al directorio del proyecto
 
    ```sh
-    cd restaurant-backend
+    cd proyecto-backend-metrodat
    ```
 3. Abre el Proyecto en tu IDE preferido
 
