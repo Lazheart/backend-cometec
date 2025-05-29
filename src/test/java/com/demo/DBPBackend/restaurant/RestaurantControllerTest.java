@@ -8,7 +8,7 @@ import com.demo.DBPBackend.restaurant.dto.RestaurantRequestDto;
 import com.demo.DBPBackend.restaurant.dto.RestaurantResponseDto;
 import com.demo.DBPBackend.restaurant.dto.RestaurantSummaryDto;
 import com.demo.DBPBackend.review.dto.ReviewResponseDto;
-import com.demo.DBPBackend.ubicacion.dto.UbicacionDto;
+import com.demo.DBPBackend.location.dto.LocationDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,27 +36,27 @@ public class RestaurantControllerTest {
     private RestaurantRequestDto requestDto;
     private RestaurantResponseDto responseDto;
     private RestaurantSummaryDto summaryDto;
-    private UbicacionDto ubicacionDto;
+    private LocationDto locationDto;
     private MenuResponseDto menuResponseDto;
     private List<ReviewResponseDto> reviewList;
     private List<CommentResponseDto> commentList;
 
     @BeforeEach
     void setUp() {
-        ubicacionDto = new UbicacionDto();
-        ubicacionDto.setLatitud(10.0);
-        ubicacionDto.setLongitud(20.0);
+        locationDto = new LocationDto();
+        locationDto.setLatitud(10.0);
+        locationDto.setLongitud(20.0);
 
         requestDto = new RestaurantRequestDto();
         requestDto.setName("Test Restaurant");
-        requestDto.setUbicacion(ubicacionDto);
+        requestDto.setUbicacion(locationDto);
 
         responseDto = new RestaurantResponseDto();
         responseDto.setId(1L);
         responseDto.setName("Test Restaurant");
         responseDto.setOwnerId(1L);
         responseDto.setOwnerName("Owner");
-        responseDto.setUbicacion(ubicacionDto);
+        responseDto.setUbicacion(locationDto);
         responseDto.setTotalReviews(5);
         responseDto.setHasMenu(true);
 
@@ -64,7 +64,7 @@ public class RestaurantControllerTest {
         summaryDto.setId(1L);
         summaryDto.setName("Test Restaurant");
         summaryDto.setOwnerName("Owner");
-        summaryDto.setUbicacion(ubicacionDto);
+        summaryDto.setUbicacion(locationDto);
         summaryDto.setTotalReviews(5);
 
         menuResponseDto = new MenuResponseDto();
