@@ -1,4 +1,4 @@
-package com.demo.DBPBackend.ubicacion.domain;
+package com.demo.DBPBackend.location.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-public class Ubicacion {
+public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

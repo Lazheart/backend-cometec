@@ -1,6 +1,6 @@
 package com.demo.DBPBackend.restaurant.dto;
 
-import com.demo.DBPBackend.ubicacion.dto.UbicacionDto;
+import com.demo.DBPBackend.location.dto.LocationDto;
 import lombok.Data;
 
 @Data
@@ -8,6 +8,6 @@ public class RestaurantSummaryDto {
     private Long id;
     private String name;
     private String ownerName;
-    private UbicacionDto ubicacion;
+    private LocationDto ubicacion;
     private Integer totalReviews;
 }

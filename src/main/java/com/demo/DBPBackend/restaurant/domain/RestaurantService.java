@@ -11,8 +11,8 @@ import com.demo.DBPBackend.restaurant.dto.RestaurantSummaryDto;
 import com.demo.DBPBackend.restaurant.infrastructure.RestaurantRepository;
 import com.demo.DBPBackend.review.domain.Review;
 import com.demo.DBPBackend.review.dto.ReviewResponseDto;
-import com.demo.DBPBackend.ubicacion.domain.Ubicacion;
-import com.demo.DBPBackend.ubicacion.dto.UbicacionDto;
+import com.demo.DBPBackend.location.domain.Location;
+import com.demo.DBPBackend.location.dto.LocationDto;
 import com.demo.DBPBackend.user.domain.User;
 import com.demo.DBPBackend.user.infrastructure.UserRepository;
 import jakarta.transaction.Transactional;
@@ -98,11 +98,11 @@ public class RestaurantService {
         restaurant.setOwner(currentUser);
 
         // Crear ubicación como entidad independiente
-        Ubicacion ubicacion = new Ubicacion();
-        ubicacion.setLatitud(dto.getUbicacion().getLatitud());
-        ubicacion.setLongitud(dto.getUbicacion().getLongitud());
+        Location location = new Location();
+        location.setLatitud(dto.getUbicacion().getLatitud());
+        location.setLongitud(dto.getUbicacion().getLongitud());
 
-        restaurant.setUbicacion(ubicacion);
+        restaurant.setLocation(location);
 
         restaurantRepository.save(restaurant);
     }
@@ -119,9 +119,9 @@ public class RestaurantService {
         restaurant.setName(dto.getName());
 
         // Actualizar ubicación como entidad independiente
-        Ubicacion ubicacion = restaurant.getUbicacion();
-        ubicacion.setLatitud(dto.getUbicacion().getLatitud());
-        ubicacion.setLongitud(dto.getUbicacion().getLongitud());
+        Location location = restaurant.getLocation();
+        location.setLatitud(dto.getUbicacion().getLatitud());
+        location.setLongitud(dto.getUbicacion().getLongitud());
 
         restaurantRepository.save(restaurant);
     }
@@ -143,7 +143,7 @@ public class RestaurantService {
         dto.setId(restaurant.getId());
         dto.setName(restaurant.getName());
         dto.setOwnerName(restaurant.getOwner().getName());
-        dto.setUbicacion(toUbicacionDto(restaurant.getUbicacion()));
+        dto.setUbicacion(toUbicacionDto(restaurant.getLocation()));
         dto.setTotalReviews(restaurant.getValoraciones().size());
         return dto;
     }
@@ -154,7 +154,7 @@ public class RestaurantService {
         dto.setName(restaurant.getName());
         dto.setOwnerId(restaurant.getOwner().getId());
         dto.setOwnerName(restaurant.getOwner().getName());
-        dto.setUbicacion(toUbicacionDto(restaurant.getUbicacion()));
+        dto.setUbicacion(toUbicacionDto(restaurant.getLocation()));
         dto.setTotalReviews(restaurant.getValoraciones().size());
         dto.setHasMenu(restaurant.getMenu() != null);
         return dto;
@@ -215,10 +215,10 @@ public class RestaurantService {
                 .orElse(0.0);
     }
 */
-    private UbicacionDto toUbicacionDto(Ubicacion ubicacion) {
-        UbicacionDto dto = new UbicacionDto();
-        dto.setLatitud(ubicacion.getLatitud());
-        dto.setLongitud(ubicacion.getLongitud());
+    private LocationDto toUbicacionDto(Location location) {
+        LocationDto dto = new LocationDto();
+        dto.setLatitud(location.getLatitud());
+        dto.setLongitud(location.getLongitud());
         return dto;
     }
 }

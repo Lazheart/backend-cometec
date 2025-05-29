@@ -4,7 +4,7 @@ import com.demo.DBPBackend.dish.domain.Dish;
 import com.demo.DBPBackend.menu.domain.Menu;
 import com.demo.DBPBackend.restaurant.domain.Restaurant;
 import com.demo.DBPBackend.restaurant.infrastructure.RestaurantRepository;
-import com.demo.DBPBackend.ubicacion.domain.Ubicacion;
+import com.demo.DBPBackend.location.domain.Location;
 import com.demo.DBPBackend.user.domain.Role;
 import com.demo.DBPBackend.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,16 +46,16 @@ public class RestaurantRepositoryTest {
         entityManager.persist(owner);
 
         // Crear ubicación
-        Ubicacion ubicacion = new Ubicacion();
-        ubicacion.setLongitud(12.0);
-        ubicacion.setLatitud(-77.0);
-        entityManager.persist(ubicacion);
+        Location location = new Location();
+        location.setLongitud(12.0);
+        location.setLatitud(-77.0);
+        entityManager.persist(location);
 
         // Crear restaurante (sin menú todavía)
         Restaurant restaurant = new Restaurant();
         restaurant.setName("Restaurant1");
         restaurant.setOwner(owner);
-        restaurant.setUbicacion(ubicacion);
+        restaurant.setLocation(location);
 
         // Crear menú y asignarlo al restaurante
         Menu menu = new Menu();
@@ -121,9 +121,9 @@ public class RestaurantRepositoryTest {
     @Test
     public void testRestaurantUbicacion() {
         var restaurant = restaurantRepository.findAll().get(0);
-        assertThat(restaurant.getUbicacion()).isNotNull();
-        assertThat(restaurant.getUbicacion().getLatitud()).isEqualTo(-77.0);
-        assertThat(restaurant.getUbicacion().getLongitud()).isEqualTo(12.0);
+        assertThat(restaurant.getLocation()).isNotNull();
+        assertThat(restaurant.getLocation().getLatitud()).isEqualTo(-77.0);
+        assertThat(restaurant.getLocation().getLongitud()).isEqualTo(12.0);
     }
 
     @Test

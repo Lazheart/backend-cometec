@@ -1,7 +1,7 @@
 package com.demo.DBPBackend.restaurant.domain;
 
 import com.demo.DBPBackend.menu.domain.Menu;
-import com.demo.DBPBackend.ubicacion.domain.Ubicacion;
+import com.demo.DBPBackend.location.domain.Location;
 import com.demo.DBPBackend.review.domain.Review;
 import com.demo.DBPBackend.user.domain.User;
 import jakarta.persistence.*;
@@ -37,7 +37,7 @@ public class Restaurant {
 
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "ubicacion_id", nullable = false)
-    private Ubicacion ubicacion;
+    private Location location;
 
 
     @OneToOne(cascade = CascadeType.ALL, optional = false)
