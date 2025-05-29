@@ -33,7 +33,7 @@ Abre tu terminal y clona el Repositorio con el siguiente comando :
    Cambia al directorio del proyecto
 
    ```sh
-    cd proyecto-backend-mure
+    cd restaurant-backend
    ```
 3. Abre el Proyecto en tu IDE preferido
 
