@@ -1,9 +1,9 @@
-package com.demo.DBPBackend.ubicacion.dto;
+package com.demo.DBPBackend.location.dto;
 
 import lombok.Data;
 
 @Data
-public class UbicacionDto {
+public class LocationDto {
     private Double latitud;
     private Double longitud;
 }

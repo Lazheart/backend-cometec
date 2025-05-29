@@ -144,17 +144,6 @@ Seguir estos pasos asegura que el proyecto pueda ser lanzado de manera local.
 | DELETE | `/dishes/{id}`           | Eliminar plato             |
 | GET    | `/dishes/{id}`           | Detalles del plato         |
 
-⭐ Dish Rating (Valoración de Platos)
-
-| Método | EndPoint                          | Descripción                                                 |
-| ------ | --------------------------------- | ----------------------------------------------------------- |
-| POST   | `/dishes/{dishId}/ratings`        | Cliente deja una valoración (1 a 5 estrellas) para un plato |
-| PUT    | `/ratings/{ratingId}`             | Editar valoración del plato (cliente)                       |
-| DELETE | `/ratings/{ratingId}`             | Eliminar valoración del plato (cliente)                     |
-| GET    | `/dishes/{dishId}/ratings`        | Listar todas las valoraciones de un plato                   |
-| GET    | `/dishes/{dishId}/average-rating` | Obtener promedio de estrellas del plato                     |
-
-//este ultimo talvez no hay que meterlo
 
 ## Opiniones de los Dev  💥
 

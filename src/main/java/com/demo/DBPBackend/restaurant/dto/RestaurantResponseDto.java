@@ -1,13 +1,7 @@
 package com.demo.DBPBackend.restaurant.dto;
 
-import com.demo.DBPBackend.menu.domain.Menu;
-import com.demo.DBPBackend.review.dto.ReviewResponseDto;
-import com.demo.DBPBackend.ubicacion.domain.Ubicacion;
-import com.demo.DBPBackend.ubicacion.dto.UbicacionDto;
-import com.demo.DBPBackend.user.dto.UserSummaryDto;
+import com.demo.DBPBackend.location.dto.LocationDto;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class RestaurantResponseDto {
@@ -15,7 +9,7 @@ public class RestaurantResponseDto {
     private String name;
     private Long ownerId;
     private String ownerName;
-    private UbicacionDto ubicacion;
+    private LocationDto ubicacion;
     private Integer totalReviews;
     private Boolean hasMenu;
 }
