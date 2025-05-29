@@ -151,3 +151,97 @@ Esta colección de Postman contiene los diferentes endpoints REST de nuestra apl
 
 (https://lazheart.postman.co/workspace/Lazheart's-Workspace~2eca68a4-0d71-4d01-88e7-ae8ef981f62c/collection/43513911-afc0fe12-815b-4a4c-9b70-2aca6cc83ae6?action=share&creator=45430589)
 
+## Medidas de Seguridad Implementadas
+✅ Autenticación y Autorización
+
+    JWT (JSON Web Token): Autenticación segura basada en tokens.
+
+    Gestión de Roles: Jerarquía de permisos → ADMIN > OWNER > USER.
+
+    Expiración de Tokens: Válidos por 10 horas.
+
+    Validación de Token: Verificada en cada solicitud.
+
+🔒 Control de Acceso
+
+    RBAC (Role-Based Access Control): Mediante anotaciones @PreAuthorize.
+
+    Ejemplo: Solo ADMIN puede acceder a endpoints sensibles, USER accede a su propio contexto.
+
+📋 Validación de Datos
+
+    Se utilizan anotaciones de Jakarta Bean Validation:
+
+        @NotNull, @NotBlank: Evitan nulos o vacíos.
+
+        @Size: Controla la longitud de cadenas.
+
+        @Email: Verifica formato de correos electrónicos.
+
+        @DecimalMin: Define valores numéricos mínimos.
+
+🔐 Cifrado
+
+    Contraseñas: Hasheadas con Spring Security (por ejemplo, BCryptPasswordEncoder).
+
+    JWT: Firmados con el algoritmo HMAC256.
+
+🛡️ Prevención de Vulnerabilidades
+
+    CSRF: Deshabilitado para APIs REST; el JWT ofrece protección.
+
+    XSS: Validación y sanitización de entradas habilitadas.
+
+    Inyección SQL: Evitada mediante JPA/Hibernate y consultas parametrizadas.
+
+⚙️ Otras Medidas
+
+    Sesiones Stateless: Sin estado del lado del servidor.
+
+    Headers de Seguridad: Aplicados en la configuración de seguridad.
+
+    CORS: Configuración específica para dominios permitidos. 
+
+## Eventos y Asincronía
+🛠️ Configuración Asíncrona
+
+    Habilitada globalmente con @EnableAsync.
+
+    Métodos anotados con @Async se ejecutan en segundo plano.
+
+📬 Eventos de Registro
+
+    Uso de eventos asíncronos para operaciones post-registro:
+
+        Envío de correos de bienvenida.
+
+        Registro de auditoría.
+
+⚡ Beneficios del Manejo Asíncrono
+
+    Rendimiento Mejorado:
+
+        Operaciones largas (como emails) no bloquean el flujo principal.
+
+        Procesamiento paralelo de tareas.
+
+    Casos de Uso:
+
+        Envío de correos.
+
+        Notificaciones.
+
+        Auditorías y logs.
+
+    Ventajas Clave:
+
+        Mejor experiencia de usuario.
+
+        Optimización de recursos del servidor.
+
+        Escalabilidad.
+
+        Desacoplamiento de lógica.
+
+        Tolerancia a fallos (errores en tareas asíncronas no afectan la ejecución principal).
+
