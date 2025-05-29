@@ -36,12 +36,11 @@ public class Restaurant {
     private User owner;
 
     @OneToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "ubicacion_id", nullable = false)
+    @JoinColumn(name = "ubicacion_id")
     private Location location;
 
-
     @OneToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "menu_id", nullable = false, unique = true)
+    @JoinColumn(name = "menu_id", unique = true)
     private Menu menu;
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)

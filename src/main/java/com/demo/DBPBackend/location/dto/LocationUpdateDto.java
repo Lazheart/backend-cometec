@@ -3,10 +3,8 @@ package com.demo.DBPBackend.location.dto;
 import lombok.Data;
 
 @Data
-public class LocationDto {
-
+public class LocationUpdateDto {
 
     private Double latitud;
-
     private Double longitud;
 }
