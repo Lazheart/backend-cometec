@@ -1,0 +1,11 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: proyecto-backend-dev
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+    ports:
+      - "5555:5432"
