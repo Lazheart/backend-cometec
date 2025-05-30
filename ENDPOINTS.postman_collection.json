@@ -11,7 +11,7 @@
 			"name": "AUTH",
 			"item": [
 				{
-					"name": "SIGNIN",
+					"name": "REGISTER",
 					"event": [
 						{
 							"listen": "test",
@@ -42,14 +42,14 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \" \",\n    \"password\": \"password\",\n    \"name\": \" \",\n    \"lastname\": \" \",\n    \"phone\": \" \",\n    \"role\": \"OWNER \"  //OWNER OR USER\n }",
+							"raw": "{\n    \"email\": \"lazheart@gmail.com\",\n    \"password\": \"password\",\n    \"name\": \"lazheart\",\n    \"lastname\": \"label \",\n    \"phone\": \"907690545\",\n    \"role\": \"OWNER\"  //OWNER OR USER\n }",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "{{base_url}}/auth/signin",
+						"url": "{{base_url}}/auth/register",
 						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
 					},
 					"response": []
@@ -90,7 +90,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \" \",\r\n    \"password\": \"password\"\r\n}",
+							"raw": "{\r\n    \"email\": \"danielrestaurante@gmail.com\",\r\n    \"password\": \"12345678\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -207,9 +207,11 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"const response = pm.response.json();\r",
-									"pm.environment.set(\"token\", response.token);\r",
-									"pm.environment.set(\"id\", response.id);"
+									"pm.test(\"Actualizado correctamente. Logéate de nuevo.\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									""
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -324,11 +326,79 @@
 					"response": []
 				},
 				{
+					"name": "GetallUsers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Verifica que el token exista\r",
+									"if (!pm.collectionVariables.get(\"token\")) {\r",
+									"    throw new Error(\"Token no encontrado. Haz login primero.\");\r",
+									"}\r",
+									"\r",
+									"// Verifica que el user_id exista\r",
+									"if (!pm.collectionVariables.get(\"id\")) {\r",
+									"    throw new Error(\"Id no encontrado. Ejecuta GetMe primero.\");\r",
+									"}\r",
+									"\r",
+									"// Opcional: Imprime valores para debug\r",
+									"console.log(\"Token:\", pm.collectionVariables.get(\"token\"));\r",
+									"console.log(\"User ID:\", pm.collectionVariables.get(\"id\"));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/user/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"all"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "GetReview",
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "{{base_url}}/users/{{id}}/reviews"
+						"url": "{{base_url}}/user/reviews"
 					},
 					"response": []
 				},
@@ -345,13 +415,12 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{base_url}}/user/{{id}}/comments",
+							"raw": "{{base_url}}/user/comments",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"user",
-								"{{id}}",
 								"comments"
 							],
 							"query": [
@@ -362,6 +431,24 @@
 								}
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteById",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{base_url}}/user/{{id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "GetOwnedRestaurant",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/user/owned-restaurants"
 					},
 					"response": []
 				}
@@ -422,11 +509,11 @@
 						}
 					],
 					"request": {
-						"method": "PUT",
+						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"  \",\r\n  \"ubicacion\": {\r\n    \"latitud\": -12.046374,    // Ejemplo: Coordenadas de Lima, Perú\r\n    \"longitud\": -77.042793\r\n  }\r\n}",
+							"raw": "{\r\n  \"name\": \"lazheartCooks\",\r\n  \"ubicacion\": {\r\n    \"latitud\": -12.046374,    // Ejemplo: Coordenadas de Lima, Perú\r\n    \"longitud\": -77.042793\r\n  }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -957,6 +1044,47 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "LOCATION",
+			"item": [
+				{
+					"name": "GetLocationsRes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/locations/restaurants/{{restaurantId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "AddLocations",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "{{base_url}}/locations/restaurants/{{restaurantId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateLocation",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "{{base_url}}/locations/{{locationId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteLocation",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{base_url}}/locations/{{locationId}}"
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"auth": {
@@ -1027,6 +1155,11 @@
 		},
 		{
 			"key": "dishId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "locationId",
 			"value": "",
 			"type": "string"
 		}

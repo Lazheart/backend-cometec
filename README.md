@@ -122,75 +122,79 @@ Valoraciones dejadas por los clientes.
 Comentarios sobre reseñas existentes.
 
 ## Endpoints 🛣️
-📍 Location
 
-| Método | EndPoint                      | Descripción                          |
-| ------ | ----------------------------- | ------------------------------------ |
-| GET    | `/restaurants/{id}/locations` | Listar ubicaciones de un restaurante |
-| POST   | `/restaurants/{id}/locations` | Añadir ubicación                     |
-| PUT    | `/locations/{locationId}`     | Editar ubicación                     |
-| DELETE | `/locations/{locationId}`     | Eliminar ubicación                   |
+### 👤 User
+| Método | EndPoint                      | Descripción                          | Roles Permitidos |
+| ------ | ----------------------------- | ------------------------------------ | ---------------- |
+| GET    | `/user/me`                    | Obtener información del usuario actual | USER             |
+| GET    | `/user/{id}`                  | Obtener información de un usuario por ID | ADMIN           |
+| GET    | `/user/all`                   | Listar todos los usuarios            | ADMIN            |
+| PATCH  | `/user/update/me`             | Actualizar información del usuario actual | USER           |
+| DELETE | `/user/{id}`                  | Eliminar usuario                     | ADMIN            |
+| GET    | `/user/favourites`            | Obtener restaurantes favoritos       | USER             |
+| GET    | `/user/owned-restaurants`     | Obtener restaurantes propiedad del usuario | OWNER        |
+| GET    | `/user/comments`              | Obtener comentarios del usuario      | USER             |
+| GET    | `/user/reviews`               | Obtener reseñas del usuario          | USER             |
 
-👤 Usuario
+### 🍽️ Restaurant
+| Método | EndPoint                      | Descripción                          | Roles Permitidos |
+| ------ | ----------------------------- | ------------------------------------ | ---------------- |
+| GET    | `/restaurants`                | Listar todos los restaurantes        | USER, OWNER, ADMIN |
+| GET    | `/restaurants/{restaurantId}` | Obtener detalles de un restaurante   | USER, OWNER, ADMIN |
+| GET    | `/restaurants/{id}/reviews`   | Obtener reseñas del restaurante      | USER, OWNER, ADMIN |
+| GET    | `/restaurants/{id}/comments`  | Obtener comentarios del restaurante  | USER, OWNER, ADMIN |
+| GET    | `/restaurants/{id}/menu`      | Obtener carta del restaurante        | USER, OWNER, ADMIN |
+| POST   | `/restaurants`                | Crear restaurante                    | OWNER            |
+| PUT    | `/restaurants/{restaurantId}` | Actualizar restaurante               | OWNER            |
+| DELETE | `/restaurants/{restaurantId}` | Eliminar restaurante                 | OWNER            |
 
-| Método | EndPoint               | Descripción                     |
-|--------|------------------------|---------------------------------|
-| GET    | `/users/me`            | Información personal            |
-| PATCH  | `/users/me`            | Actualizar información personal |
-| GET    | `/users/{id}`          | Información del usuario por ID  |
-| GET    | `/users/{id}/reviews`  | Reseñas por cliente             |
-| GET    | `/users/{id}/comments` | Comentarios dejados por cliente |
+### 📝 Review
+| Método | EndPoint                      | Descripción                          | Roles Permitidos |
+| ------ | ----------------------------- | ------------------------------------ | ---------------- |
+| GET    | `/reviews/restaurant/{restaurantId}` | Obtener reseñas por restaurante | USER             |
+| GET    | `/reviews/{reviewId}`         | Obtener reseña por ID               | ADMIN            |
+| GET    | `/reviews/all`                | Obtener todas las reseñas           | USER             |
+| GET    | `/reviews/me`                 | Obtener reseñas del usuario actual  | USER             |
+| GET    | `/reviews/user/{userId}`      | Obtener reseñas por usuario         | USER             |
+| POST   | `/reviews`                    | Crear reseña                        | USER             |
+| PATCH  | `/reviews/content/{reviewId}` | Actualizar contenido de reseña      | USER             |
+| PATCH  | `/reviews/dislike/{reviewId}` | Dislike a reseña                    | USER             |
+| PATCH  | `/reviews/like/{reviewId}`    | Like a reseña                       | USER             |
+| DELETE | `/reviews/{reviewId}`         | Eliminar reseña                     | USER             |
 
-🍽️ Restaurante
+### 💬 Comment
+| Método | EndPoint                      | Descripción                          | Roles Permitidos |
+| ------ | ----------------------------- | ------------------------------------ | ---------------- |
+| GET    | `/comments/review/{reviewId}` | Obtener comentarios por reseña      | ADMIN            |
+| POST   | `/comments`                   | Crear comentario                    | Todos            |
+| DELETE | `/comments/{commentId}`       | Eliminar comentario                 | Todos            |
 
-| Método | EndPoint                     | Descripción                                    |
-| ------ | ---------------------------- |------------------------------------------------|
-| GET    | `/restaurants`               | Listar todos los restaurantes                  |
-| GET    | `/restaurants/{id}`          | Obtener detalles de un restaurante             |
-| GET    | `/restaurants/{id}/reviews`  | Obtener reseñas del restaurante                |
-| GET    | `/restaurants/{id}/comments` | Obtener todos los comentarios del restaurante  |
-| GET    | `/restaurants/{id}/menu`     | Obtener carta del restaurante                  |
-| POST   | `/restaurants`               | Actualizar datos del restaurante (propietario) |
-| PUT    | `/restaurants/{id}`          | Crear restaurante (solo para propietarios)     |
-| DELETE | `/restaurants/{id}`          | Eliminar restaurante                           |
+### 📋 Menu
+| Método | EndPoint                      | Descripción                          | Roles Permitidos |
+| ------ | ----------------------------- | ------------------------------------ | ---------------- |
+| POST   | `/menu/restaurants/{restaurantId}` | Crear menú para restaurante | OWNER            |
+| GET    | `/menu/{menuId}`              | Obtener menú por ID                 | USER, OWNER, ADMIN |
+| PUT    | `/menu/{menuId}`              | Actualizar menú                     | OWNER            |
+| DELETE | `/menu/{menuId}`              | Eliminar menú                       | OWNER            |
 
-📝 Review (Reseñas)
+### 🍛 Dish
+| Método | EndPoint                      | Descripción                          | Roles Permitidos |
+| ------ | ----------------------------- | ------------------------------------ | ---------------- |
+| GET    | `/dishes/all`                 | Obtener todos los platos            | ADMIN            |
+| GET    | `/dishes/{dishId}`            | Obtener plato por ID                | ADMIN            |
+| GET    | `/dishes/carta/{menuId}`      | Obtener platos por menú             | USER             |
+| GET    | `/dishes/restaurant/{restaurantId}` | Obtener platos por restaurante | USER             |
+| POST   | `/dishes`                     | Crear plato                         | OWNER            |
+| PATCH  | `/dishes/{dishId}`            | Actualizar plato                    | OWNER            |
+| DELETE | `/dishes/{dishId}`            | Eliminar plato                      | OWNER            |
 
-| Método | EndPoint                              | Descripción                                 |
-| ------ | ------------------------------------- | ------------------------------------------- |
-| POST   | `/restaurants/{restaurantId}/reviews` | Cliente deja reseña                         |
-| GET    | `/reviews/{id}`                       | Obtener una reseña                          |
-| PUT    | `/reviews/{id}`                       | Editar reseña (cliente)                     |
-| DELETE | `/restaurants/{id}/reviews`           | Eliminar reseña (cliente)                   |
-| GET    | `/restaurants/{id}/average-rating`    | Obtener promedio de reseñas del restaurante |
-
-💬 Comment (Comentarios)
-
-| Método | EndPoint                       | Descripción                      |
-| ------ | ------------------------------ | -------------------------------- |
-| POST   | `/reviews/{reviewId}/comments` | Agregar comentario a reseña      |
-| GET    | `/reviews/{reviewId}/comments` | Listar comentarios de una reseña |
-| PUT    | `/comments/{commentId}`        | Editar comentario                |
-| DELETE | `/comments/{commentId}`        | Eliminar comentario              |
-
-📋 Menu (Carta)
-
-| Método | EndPoint                           | Descripción                  |
-| ------ | ---------------------------------- | ---------------------------- |
-| POST   | `/restaurants/{restaurantId}/menu` | Crear carta para restaurante |
-| GET    | `/menus/{id}`                      | Ver carta específica         |
-| PUT    | `/menus/{id}`                      | Actualizar carta             |
-| DELETE | `/menus/{id}`                      | Eliminar carta               |
-
-🍛 Dish (Plato)
-
-| Método | EndPoint                 | Descripción                |
-| ------ | ------------------------ | -------------------------- |
-| POST   | `/menus/{menuId}/dishes` | Agregar plato a la carta   |
-| GET    | `/menus/{menuId}/dishes` | Listar platos de una carta |
-| PUT    | `/dishes/{id}`           | Actualizar plato           |
-| DELETE | `/dishes/{id}`           | Eliminar plato             |
-| GET    | `/dishes/{id}`           | Detalles del plato         |
+### 📍 Location
+| Método | EndPoint                      | Descripción                          | Roles Permitidos |
+| ------ | ----------------------------- | ------------------------------------ | ---------------- |
+| GET    | `/locations/restaurants/{restaurantId}` | Obtener ubicaciones de restaurante | USER, OWNER, ADMIN |
+| POST   | `/locations/restaurants/{restaurantId}` | Añadir ubicación a restaurante | OWNER, ADMIN     |
+| PUT    | `/locations/{locationId}`     | Actualizar ubicación                | OWNER, ADMIN     |
+| DELETE | `/locations/{locationId}`     | Eliminar ubicación                  | OWNER, ADMIN     |
 
 ## Testing y Manejo de Errores
 
