@@ -31,28 +31,28 @@ public class RestaurantController {
 
     // Obtener detalles de un restaurante
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @GetMapping("/{id}")
+    @GetMapping("/{restaurantId}")
     public ResponseEntity<RestaurantResponseDto> getRestaurantById(@PathVariable Long id) {
         return ResponseEntity.ok(restaurantService.getRestaurantById(id));
     }
 
     // Obtener reseñas del restaurante
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @GetMapping("/{id}/reviews")
+    @GetMapping("/{restaurantId}/reviews")
     public ResponseEntity<List<ReviewResponseDto>> getRestaurantReviews(@PathVariable Long id) {
         return ResponseEntity.ok(restaurantService.getRestaurantReviews(id));
     }
 
     // Obtener comentarios del restaurante
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @GetMapping("/{id}/comments")
+    @GetMapping("/{restaurantId}/comments")
     public ResponseEntity<List<CommentResponseDto>> getRestaurantComments(@PathVariable Long id) {
         return ResponseEntity.ok(restaurantService.getRestaurantComments(id));
     }
 
     // Obtener carta del restaurante
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @GetMapping("/{id}/menu")
+    @GetMapping("/{restaurantId}/menu")
     public ResponseEntity<MenuResponseDto> getRestaurantMenu(@PathVariable Long id) {
         return ResponseEntity.ok(restaurantService.getRestaurantMenu(id));
     }
@@ -67,7 +67,7 @@ public class RestaurantController {
 
     // Actualizar restaurante (propietario)
     @PreAuthorize("hasRole('OWNER')")
-    @PutMapping("/{id}")
+    @PutMapping("/{restaurantId}")
     public ResponseEntity<Void> updateRestaurant(@PathVariable Long id, @RequestBody RestaurantRequestDto dto) {
         restaurantService.updateRestaurant(id, dto);
         return ResponseEntity.ok().build();
@@ -75,7 +75,7 @@ public class RestaurantController {
 
     // Eliminar restaurante
     @PreAuthorize("hasRole('OWNER')")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{restaurantId}")
     public ResponseEntity<Void> deleteRestaurant(@PathVariable Long id) {
         restaurantService.deleteRestaurant(id);
         return ResponseEntity.noContent().build();

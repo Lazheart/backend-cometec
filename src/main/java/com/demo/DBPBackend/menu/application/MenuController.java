@@ -27,14 +27,14 @@ public class MenuController {
 
     // Ver carta específica
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @GetMapping("/{id}")
+    @GetMapping("/{menuId}")
     public ResponseEntity<MenuResponseDto> getMenuById(@PathVariable Long id) {
         return ResponseEntity.ok(menuService.getMenuById(id));
     }
 
     // Actualizar carta
     @PreAuthorize("hasRole('OWNER')")
-    @PutMapping("/{id}")
+    @PutMapping("/{menuId}")
     public ResponseEntity<Void> updateMenu(@PathVariable Long id, @RequestBody MenuRequestDto dto) {
         menuService.updateMenu(id, dto);
         return ResponseEntity.ok().build();
@@ -42,7 +42,7 @@ public class MenuController {
 
     // Eliminar carta
     @PreAuthorize("hasRole('OWNER')")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{menuId}")
     public ResponseEntity<Void> deleteMenu(@PathVariable Long id) {
         menuService.deleteMenu(id);
         return ResponseEntity.noContent().build();

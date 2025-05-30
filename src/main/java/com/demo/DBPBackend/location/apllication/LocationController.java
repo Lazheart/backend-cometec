@@ -18,15 +18,16 @@ import java.util.List;
 public class LocationController {
     private final LocationService locationService;
 
+
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @GetMapping("/restaurants/{id}")
+     @GetMapping("/restaurants/{restaurantId}")
     public ResponseEntity<List<LocationDto>> getLocationsByRestaurant( @PathVariable Long id) {
         List<LocationDto> locations = locationService.getLocationsByRestaurant(id);
         return ResponseEntity.ok(locations);
     }
 
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
-    @PostMapping("/restaurants/{id}")
+    @PostMapping("/restaurants/{restaurantId}")
     public ResponseEntity<LocationDto> addLocationToRestaurant( @PathVariable Long id, @RequestBody LocationCreateDTO locationCreateDTO) {
         LocationDto createdLocation = locationService.addLocationToRestaurant(id, locationCreateDTO);
         return new ResponseEntity<>(createdLocation, HttpStatus.CREATED);
