@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/review")
+@RequestMapping("/reviews")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -26,7 +26,7 @@ public class ReviewController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/{id}")
+    @GetMapping("/{reviewId}")
     public ResponseEntity<ReviewResponseDto> getReviewById(@PathVariable Long id) {
         return ResponseEntity.ok(reviewService.getReviewById(id));
     }
@@ -61,21 +61,21 @@ public class ReviewController {
 
 
     @PreAuthorize("hasRole('USER')")
-    @PatchMapping("/content/{id}")
+    @PatchMapping("/content/{reviewId}")
     public ResponseEntity<Void> updateReviewContent(@PathVariable Long id, @RequestBody ReviewUpdateContentDto content) {
         reviewService.changeContent(id, content.getContent());
         return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasRole('USER')")
-    @PatchMapping("/dislike/{id}")
+    @PatchMapping("/dislike/{reviewId}")
     public ResponseEntity<Void> dislikeReview(@PathVariable Long id) {
         reviewService.dislikeReview(id);
         return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasRole('USER')")
-    @PatchMapping("/like/{id}")
+    @PatchMapping("/like/{reviewId}")
     public ResponseEntity<Void> likeReview(@PathVariable Long id) {
         reviewService.likeReview(id);
         return ResponseEntity.noContent().build();
@@ -83,7 +83,7 @@ public class ReviewController {
 
 
     @PreAuthorize("hasRole('USER')")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
         reviewService.deleteReview(id);
         return ResponseEntity.noContent().build();
