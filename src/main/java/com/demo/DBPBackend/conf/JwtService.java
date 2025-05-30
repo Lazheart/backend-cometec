@@ -23,7 +23,7 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secret;
 
-    private final UserService userService;
+    private final UserDetailsConf userDetailsConf;
 
     public String extractUsername(String token) {
         return JWT.decode(token).getSubject();
@@ -47,7 +47,7 @@ public class JwtService {
 
         JWT.require(Algorithm.HMAC256(secret)).build().verify(token);
 
-        UserDetails userDetails = userService.userDetailsService().loadUserByUsername(userEmail);
+        UserDetails userDetails = userDetailsConf.userDetailsService().loadUserByUsername(userEmail);
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
