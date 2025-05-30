@@ -1,8 +1,5 @@
-
-# ComeTec Backend🍽️
-
-## Descripcion
-Backend para un sistema de gestión de restaurantes que permite a los clientes explorar restaurantes, dejar reseñas y comentarios, mientras que los propietarios pueden administrar sus restaurantes, cartas y platos. Incluye funcionalidades avanzadas como calificaciones, comentarios y gestión de menús.
+# ComeTec Backend🍽️: Administración de Restaurantes y Menús
+## CS20231 Desarrollo Basado en Plataformas
 
 ## Development Team 👥
 | Nombre Completo         | Usuario GitHub     | Correo                                                                    |
@@ -11,6 +8,33 @@ Backend para un sistema de gestión de restaurantes que permite a los clientes e
 | Luciana Yangali Cáceres | Luciana-y          | [luciana.yangali@utec.edu.pe](mailto:luciana.yangali@utec.edu.pe)         |
 | Leonardo Montesinos     | LeonardoMontesinos | [leonardo.montesinos@utec.edu.pe](mailto:leonardo.montesinos@utec.edu.pe) |
 | Lucia Cartagena         | luciajcm           | [lucia.cartajena@utec.edu.pe](mailto:lucia.cartajena@utec.edu.pe)         |
+
+## Introducción
+
+### Descripción
+Muchos restaurantes pequeños y medianos carecen de una solución digital personalizada que les permita interactuar directamente con sus clientes. Por un lado, los clientes no siempre tienen una manera clara y estructurada de calificar y comentar sus experiencias. Por otro lado, los dueños no tienen visibilidad clara de las opiniones de sus clientes ni herramientas que les permitan administrar eficientemente sus menús o disponibilidad de platos.
+
+### Justificación
+Ofrecer un backend robusto para este tipo de sistema ayuda a cubrir una necesidad real en el sector gastronómico: mejorar la experiencia del cliente y optimizar la gestión del restaurante. Al permitir que los usuarios dejen comentarios y califiquen los restaurantes, se crea un círculo virtuoso de retroalimentación que puede mejorar tanto el servicio como la reputación de los establecimientos. Además, la gestión dinámica del menú y platos facilita la adaptación rápida a la demanda y disponibilidad.
+
+## Descripción de la Solución
+
+### Funcionalidades
+- **Registro y gestión de usuarios:** Separación clara entre roles de cliente y propietario.
+- **Gestión de restaurantes:** Los propietarios pueden registrar su restaurante, incluyendo ubicación y carta asociada.
+- **Gestión de cartas y platos:** Permite a los propietarios crear una carta, agregar platos, y gestionar su disponibilidad.
+- **Sistema de reseñas:** Los clientes pueden calificar restaurantes con estrellas (0-5), lo que influye en una media de calificaciones.
+- **Comentarios en reseñas:** Los usuarios pueden comentar sobre las reseñas de otros, fomentando la interacción.
+
+### Tecnologías Utilizadas
+- **Lenguaje de programación:** Java
+- **Framework backend:** Spring Boot
+- **Base de datos:** PostgreSQL (posiblemente administrada con Docker y Testcontainers en entornos de desarrollo)
+- **ORM:** JPA (Hibernate)
+- **Control de versiones:** Git + GitHub
+- **Pruebas:** JUnit, Testcontainers (para pruebas de integración con la base de datos)
+- **Autenticación y autorización** Spring Security con control basado en roles
+- **Herramientas axuliares:** Postman(para pruebas de API)
 
 
 ## Prerequisites 🔧
@@ -69,10 +93,33 @@ Abre tu terminal y clona el Repositorio con el siguiente comando :
 
 Seguir estos pasos asegura que el proyecto pueda ser lanzado de manera local.
 
-## Diagrama Entidad Relaciom
+## Modelo de Entidades
+
+### Modelo de Entidad Relación
 
 ![ER Diagram](https://media.discordapp.net/attachments/1361535013195219014/1377434326727135252/postgreslocalhost.png?ex=6838f32e&is=6837a1ae&hm=1fdf7444d006cd13cc70d59c00b8639f5d416603f01acc95250da3df2245d178&=&format=webp&quality=lossless&width=716&height=1421)
 
+### Descripción de Entidades
+1. **User:**
+Representa a los usuarios del sistema con diferentes roles (ADMIN, OWNER, USER).
+
+2. **Restaurant:**
+Establecimientos gastronómicos registrados en la plataforma.
+
+3. **Menu:**
+Representa la carta de un restaurante con sus platos.
+
+4. **Dish:**
+Elementos del menú ofrecidos por el restaurante.
+     
+5. **Location:**
+Coordenadas geográficas de los restaurantes.
+
+6. **Review:**
+Valoraciones dejadas por los clientes.
+
+7. **Comment:**
+Comentarios sobre reseñas existentes.
 
 ## Endpoints 🛣️
 📍 Location
@@ -145,11 +192,39 @@ Seguir estos pasos asegura que el proyecto pueda ser lanzado de manera local.
 | DELETE | `/dishes/{id}`           | Eliminar plato             |
 | GET    | `/dishes/{id}`           | Detalles del plato         |
 
+## Testing y Manejo de Errores
 
-## POSTMAN Collections
-Esta colección de Postman contiene los diferentes endpoints REST de nuestra aplicación Spring Boot. Está diseñada para facilitar la prueba y validación de las funcionalidades principales, incluyendo la gestión de usuarios, operaciones CRUD, autenticación y cualquier otro servicio expuesto por el backend.
+### Test Unitarios y Container
 
-(https://lazheart.postman.co/workspace/Lazheart's-Workspace~2eca68a4-0d71-4d01-88e7-ae8ef981f62c/collection/43513911-afc0fe12-815b-4a4c-9b70-2aca6cc83ae6?action=share&creator=45430589)
+El proyecto cuenta con una suite completa de pruebas unitarias y de integración que garantizan la calidad del código y el correcto funcionamiento de los componentes. Se utilizan las siguientes herramientas y enfoques:
+
+- **JUnit 5**: Para la ejecución de pruebas unitarias.
+- **Mockito**: Para mockear dependencias en pruebas unitarias.
+- **Testcontainers**: Para pruebas de integración con bases de datos reales en contenedores Docker.
+- **Spring MVC Test**: Para pruebas de controladores REST.
+
+### Manejo de Errores
+
+El sistema implementa un manejo robusto de errores con respuestas HTTP claras y mensajes descriptivos. Los tests demuestran los siguientes escenarios de manejo de errores:
+
+1. **Errores de Autenticación**:
+   - `UsernameNotFoundException`: Cuando un usuario no existe
+   - `UserAlreadyExistException`: En intentos de registro duplicado
+   - `IllegalArgumentException`: Para credenciales inválidas
+
+2. **Errores de Recursos**:
+   - `ResourceNotFoundException`: Para recursos no encontrados (usuarios, restaurantes, etc.)
+   - Validación de datos de entrada con mensajes claros
+
+3. **Control de Acceso**:
+   - Pruebas de autorización para diferentes roles (USER, OWNER, ADMIN)
+   - Verificación de permisos en operaciones sensibles
+
+4. **Validación de Datos**:
+   - Pruebas para campos obligatorios
+   - Validación de formatos (email, números, etc.)
+   - Verificación de restricciones de tamaño/longitud
+
 
 ## Medidas de Seguridad Implementadas
 ✅ Autenticación y Autorización
@@ -245,3 +320,31 @@ Esta colección de Postman contiene los diferentes endpoints REST de nuestra apl
 
         Tolerancia a fallos (errores en tareas asíncronas no afectan la ejecución principal).
 
+## GitHub
+
+📌 Uso de Issues y Branches
+Durante el desarrollo del sistema, se utilizó GitHub Issues como herramienta principal para la organización y planificación de tareas. Cada funcionalidad o módulo a desarrollar fue registrado como un issue, conteniendo una breve descripción del objetivo, criterios de aceptación y cualquier consideración técnica relevante.
+
+**A partir de cada issue creado:**
+
+Se generó una branch específica cuyo nombre correspondía al identificador del issue (por ejemplo: feature/issue-12-crear-entidad-restaurante), facilitando la trazabilidad entre el trabajo realizado y la tarea asignada.
+
+Una vez completada la implementación correspondiente a esa branch, se creó un pull request (PR) hacia la rama principal (main), lo que permitía la revisión del código antes de su integración definitiva al proyecto.
+
+Este flujo ayudó a mantener una estructura de desarrollo limpia y organizada, además de fomentar buenas prácticas como la revisión cruzada de código.
+
+🔁 Pull Requests y Revisión de Código
+Cada pull request era revisado manualmente antes de su merge a main, asegurando:
+
+- Que el código cumplía con los requisitos del issue correspondiente.
+
+- Que no se rompía ninguna funcionalidad existente.
+
+- Que se seguían las convenciones de codificación acordadas por el equipo.
+
+## Conclusion
+
+## POSTMAN Collections
+Esta colección de Postman contiene los diferentes endpoints REST de nuestra aplicación Spring Boot. Está diseñada para facilitar la prueba y validación de las funcionalidades principales, incluyendo la gestión de usuarios, operaciones CRUD, autenticación y cualquier otro servicio expuesto por el backend.
+
+(https://lazheart.postman.co/workspace/Lazheart's-Workspace~2eca68a4-0d71-4d01-88e7-ae8ef981f62c/collection/43513911-afc0fe12-815b-4a4c-9b70-2aca6cc83ae6?action=share&creator=45430589)

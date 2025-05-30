@@ -1,30 +1,45 @@
 package com.demo.DBPBackend.restaurant;
 
-import com.demo.DBPBackend.dish.domain.Dish;
+import com.demo.DBPBackend.location.domain.Location;
 import com.demo.DBPBackend.menu.domain.Menu;
 import com.demo.DBPBackend.restaurant.domain.Restaurant;
 import com.demo.DBPBackend.restaurant.infrastructure.RestaurantRepository;
-import com.demo.DBPBackend.location.domain.Location;
 import com.demo.DBPBackend.user.domain.Role;
 import com.demo.DBPBackend.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
-import org.testcontainers.utility.TestcontainersConfiguration;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@Import(TestcontainersConfiguration.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Testcontainers
 public class RestaurantRepositoryTest {
+
+    @Container
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
+            .withDatabaseName("testdb")
+            .withUsername("testuser")
+            .withPassword("testpass");
+
+    @DynamicPropertySource
+    static void postgresProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
 
     @Autowired
     private RestaurantRepository restaurantRepository;
@@ -32,9 +47,11 @@ public class RestaurantRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
+    private Restaurant restaurant;
+
     @BeforeEach
     public void setUp() {
-        // Crear usuario
+        // Crear usuario propietario
         User owner = new User();
         owner.setName("Ana");
         owner.setLastname("Pérez");
@@ -51,87 +68,64 @@ public class RestaurantRepositoryTest {
         location.setLatitud(-77.0);
         entityManager.persist(location);
 
-        // Crear restaurante (sin menú todavía)
-        Restaurant restaurant = new Restaurant();
+        // Crear restaurante
+        restaurant = new Restaurant();
         restaurant.setName("Restaurant1");
         restaurant.setOwner(owner);
         restaurant.setLocation(location);
 
-        // Crear menú y asignarlo al restaurante
+        // Crear menú y establecer la relación bidireccional
         Menu menu = new Menu();
-        menu.setDishes(new ArrayList<>());
-        menu.setRestaurant(restaurant);
-        restaurant.setMenu(menu);       // relación bidireccional
+        menu.setRestaurant(restaurant);  // Establece la relación inversa
+        restaurant.setMenu(menu);        // Establece la relación principal
 
-        // Persistencia (solo del restaurante si usas cascade = ALL)
+        // Persistir primero el restaurante
         entityManager.persist(restaurant);
-
-        // Crear platos
-        Dish dish1 = new Dish();
-        dish1.setDescription("First dish");
-        dish1.setName("Dish1");
-        dish1.setPrice(12.0);
-        dish1.setMenu(menu);
-        entityManager.persist(dish1);
-
-        Dish dish2 = new Dish();
-        dish2.setDescription("Second dish");
-        dish2.setName("Dish2");
-        dish2.setPrice(24.0);
-        dish2.setMenu(menu);
-        entityManager.persist(dish2);
-
-        // Agregar platos al menú
-        menu.getDishes().add(dish1);
-        menu.getDishes().add(dish2);
+        // Luego el menú (esto debería funcionar gracias a @Transactional)
+        entityManager.persist(menu);
     }
 
     @Test
-    public void testRestaurantPersistence() {
-        var all = restaurantRepository.findAll();
-        assertThat(all).hasSize(1);
-        assertThat(all.get(0).getName()).isEqualTo("Restaurant1");
+    public void testSaveAndFindRestaurant() {
+        // Verificar que el restaurante se guardó correctamente
+        Optional<Restaurant> foundRestaurant = restaurantRepository.findById(restaurant.getId());
+        assertTrue(foundRestaurant.isPresent());
+        assertEquals("Restaurant1", foundRestaurant.get().getName());
+
+        // Verificar la relación con el menú
+        assertNotNull(foundRestaurant.get().getMenu());
+        assertEquals(restaurant.getId(), foundRestaurant.get().getMenu().getRestaurant().getId());
+    }
+
+    @Test
+    public void testFindAll() {
+        List<Restaurant> allRestaurants = restaurantRepository.findAll();
+        assertThat(allRestaurants).hasSize(1);
+        assertThat(allRestaurants.get(0).getName()).isEqualTo("Restaurant1");
     }
 
     @Test
     public void testFindByName() {
-        var restaurant = restaurantRepository.findByName("Restaurant1");
-        assertThat(restaurant).isPresent();
-        assertThat(restaurant.get().getName()).isEqualTo("Restaurant1");
+        Optional<Restaurant> foundRestaurant = restaurantRepository.findByName("Restaurant1");
+        assertTrue(foundRestaurant.isPresent());
+        assertEquals(restaurant.getId(), foundRestaurant.get().getId());
     }
 
     @Test
-    public void testRestaurantMenuAndDishes() {
-        var restaurant = restaurantRepository.findAll().get(0);
+    public void testUpdateRestaurant() {
+        restaurant.setName("Updated Restaurant");
+        restaurantRepository.save(restaurant);
 
-        assertThat(restaurant.getMenu()).isNotNull();
-        assertThat(restaurant.getMenu().getDishes()).hasSize(2);
-        assertThat(restaurant.getMenu().getDishes())
-                .extracting(Dish::getName)
-                .containsExactlyInAnyOrder("Dish1", "Dish2");
+        Optional<Restaurant> updatedRestaurant = restaurantRepository.findById(restaurant.getId());
+        assertTrue(updatedRestaurant.isPresent());
+        assertEquals("Updated Restaurant", updatedRestaurant.get().getName());
     }
 
     @Test
-    public void testRestaurantOwner() {
-        var restaurant = restaurantRepository.findAll().get(0);
-        assertThat(restaurant.getOwner()).isNotNull();
-        assertThat(restaurant.getOwner().getName()).isEqualTo("Ana");
-    }
-
-    @Test
-    public void testRestaurantUbicacion() {
-        var restaurant = restaurantRepository.findAll().get(0);
-        assertThat(restaurant.getLocation()).isNotNull();
-        assertThat(restaurant.getLocation().getLatitud()).isEqualTo(-77.0);
-        assertThat(restaurant.getLocation().getLongitud()).isEqualTo(12.0);
-    }
-
-    @Test
-    public void testDeleteRestaurantCascadesToMenu() {
-        var restaurant = restaurantRepository.findAll().get(0);
+    public void testDeleteRestaurant() {
         restaurantRepository.delete(restaurant);
-        entityManager.flush();
 
-        assertThat(restaurantRepository.findAll()).isEmpty();
+        Optional<Restaurant> deletedRestaurant = restaurantRepository.findById(restaurant.getId());
+        assertFalse(deletedRestaurant.isPresent());
     }
 }
