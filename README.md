@@ -203,6 +203,37 @@ El proyecto cuenta con una suite completa de pruebas unitarias y de integración
 - **Testcontainers**: Para pruebas de integración con bases de datos reales en contenedores Docker.
 - **Spring MVC Test**: Para pruebas de controladores REST.
 
+#### Descripción de nuestros tests
+- Para mantener una estructura organizada y facilitar el mantenimiento del proyecto, hemos creado una carpeta por entidad, donde se ubican sus respectivas pruebas unitarias. Esto permite una navegación más clara del código. Los tests unitarios implementados son:
+
+   - `CommentControllerTest`
+   - `DishControllerTest`
+   - `LocationControllerTest`
+   - `MenuControllerTest`
+   - `RestaurantControllerTest`
+   - `ReviewControllerTest`
+   - `UserControllerTest`
+
+- Tambien se hicieron pruebas unitarias para Auth:
+
+  - `AuthControllerTest`
+  - `AuthServiceTest`
+
+- Las pruebas de integración funcionan gracias al uso de Testcontainers, que permiten levantar un contenedor real de base de datos PostgreSQL durante la ejecución. Para evitar la duplicación de configuración, se ha creado la clase `TestcontainersConfigurations`, la cual es importada en cada test que requiere esta funcionalidad.
+
+   Los tests que utilizan esta configuración son:
+
+   - `DbpBackendApplicationTests`
+   - `TestDbpBackendApplication`
+
+   Estos se encargan de verificar que el proyecto se levanta correctamente y que la conexión con la base de datos se realiza sin errores.
+
+- Además, se ha implementado una prueba de integración más completa para la entidad Restaurant, ya que esta posee relaciones con varias otras entidades (como User, Location, Menu, y Dish). Esta prueba permite validar que la persistencia y las asociaciones funcionan correctamente:
+
+   -`RestaurantRepositoryTest`
+
+Esta prueba también utiliza TestcontainersConfigurations para simular un entorno real de base de datos durante su ejecución.
+
 ### Manejo de Errores
 
 El sistema implementa un manejo robusto de errores con respuestas HTTP claras y mensajes descriptivos. Los tests demuestran los siguientes escenarios de manejo de errores:
