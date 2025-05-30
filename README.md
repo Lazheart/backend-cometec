@@ -100,13 +100,26 @@ Seguir estos pasos asegura que el proyecto pueda ser lanzado de manera local.
 ![ER Diagram](https://media.discordapp.net/attachments/1361535013195219014/1377434326727135252/postgreslocalhost.png?ex=6838f32e&is=6837a1ae&hm=1fdf7444d006cd13cc70d59c00b8639f5d416603f01acc95250da3df2245d178&=&format=webp&quality=lossless&width=716&height=1421)
 
 ### Descripción de Entidades
-- **User:**
-- **Restaurant:**
-- **Menu:**
-- **Dish:**
-- **Location:**
-- **Review:**
-- **Comment:**
+1. **User:**
+Representa a los usuarios del sistema con diferentes roles (ADMIN, OWNER, USER).
+
+2. **Restaurant:**
+Establecimientos gastronómicos registrados en la plataforma.
+
+3. **Menu:**
+Representa la carta de un restaurante con sus platos.
+
+4. **Dish:**
+Elementos del menú ofrecidos por el restaurante.
+     
+5. **Location:**
+Coordenadas geográficas de los restaurantes.
+
+6. **Review:**
+Valoraciones dejadas por los clientes.
+
+7. **Comment:**
+Comentarios sobre reseñas existentes.
 
 ## Endpoints 🛣️
 📍 Location
@@ -183,7 +196,35 @@ Seguir estos pasos asegura que el proyecto pueda ser lanzado de manera local.
 
 ### Test Unitarios y Container
 
+El proyecto cuenta con una suite completa de pruebas unitarias y de integración que garantizan la calidad del código y el correcto funcionamiento de los componentes. Se utilizan las siguientes herramientas y enfoques:
+
+- **JUnit 5**: Para la ejecución de pruebas unitarias.
+- **Mockito**: Para mockear dependencias en pruebas unitarias.
+- **Testcontainers**: Para pruebas de integración con bases de datos reales en contenedores Docker.
+- **Spring MVC Test**: Para pruebas de controladores REST.
+
 ### Manejo de Errores
+
+El sistema implementa un manejo robusto de errores con respuestas HTTP claras y mensajes descriptivos. Los tests demuestran los siguientes escenarios de manejo de errores:
+
+1. **Errores de Autenticación**:
+   - `UsernameNotFoundException`: Cuando un usuario no existe
+   - `UserAlreadyExistException`: En intentos de registro duplicado
+   - `IllegalArgumentException`: Para credenciales inválidas
+
+2. **Errores de Recursos**:
+   - `ResourceNotFoundException`: Para recursos no encontrados (usuarios, restaurantes, etc.)
+   - Validación de datos de entrada con mensajes claros
+
+3. **Control de Acceso**:
+   - Pruebas de autorización para diferentes roles (USER, OWNER, ADMIN)
+   - Verificación de permisos en operaciones sensibles
+
+4. **Validación de Datos**:
+   - Pruebas para campos obligatorios
+   - Validación de formatos (email, números, etc.)
+   - Verificación de restricciones de tamaño/longitud
+
 
 ## Medidas de Seguridad Implementadas
 ✅ Autenticación y Autorización
