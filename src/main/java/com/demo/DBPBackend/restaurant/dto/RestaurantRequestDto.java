@@ -7,5 +7,5 @@ import lombok.Data;
 public class RestaurantRequestDto {
     private String name;
 
-    private LocationDto ubicacion;
+    private LocationDto locationDto;
 }

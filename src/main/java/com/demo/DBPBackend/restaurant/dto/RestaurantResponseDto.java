@@ -9,7 +9,7 @@ public class RestaurantResponseDto {
     private String name;
     private Long ownerId;
     private String ownerName;
-    private LocationDto ubicacion;
+    private LocationDto locationDto;
     private Integer totalReviews;
     private Boolean hasMenu;
 }

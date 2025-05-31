@@ -99,8 +99,8 @@ public class RestaurantService {
 
         // Crear ubicación como entidad independiente
         Location location = new Location();
-        location.setLatitud(dto.getUbicacion().getLatitud());
-        location.setLongitud(dto.getUbicacion().getLongitud());
+        location.setLatitud(dto.getLocationDto().getLatitud());
+        location.setLongitud(dto.getLocationDto().getLongitud());
 
         restaurant.setLocation(location);
 
@@ -120,8 +120,8 @@ public class RestaurantService {
 
         // Actualizar ubicación como entidad independiente
         Location location = restaurant.getLocation();
-        location.setLatitud(dto.getUbicacion().getLatitud());
-        location.setLongitud(dto.getUbicacion().getLongitud());
+        location.setLatitud(dto.getLocationDto().getLatitud());
+        location.setLongitud(dto.getLocationDto().getLongitud());
 
         restaurantRepository.save(restaurant);
     }
@@ -143,7 +143,7 @@ public class RestaurantService {
         dto.setId(restaurant.getId());
         dto.setName(restaurant.getName());
         dto.setOwnerName(restaurant.getOwner().getName());
-        dto.setUbicacion(toUbicacionDto(restaurant.getLocation()));
+        dto.setLocationDto(toLocationDto(restaurant.getLocation()));
         dto.setTotalReviews(restaurant.getValoraciones().size());
         return dto;
     }
@@ -154,7 +154,7 @@ public class RestaurantService {
         dto.setName(restaurant.getName());
         dto.setOwnerId(restaurant.getOwner().getId());
         dto.setOwnerName(restaurant.getOwner().getName());
-        dto.setUbicacion(toUbicacionDto(restaurant.getLocation()));
+        dto.setLocationDto(toLocationDto(restaurant.getLocation()));
         dto.setTotalReviews(restaurant.getValoraciones().size());
         dto.setHasMenu(restaurant.getMenu() != null);
         return dto;
@@ -184,7 +184,7 @@ public class RestaurantService {
         dto.setOwnerId(review.getUser().getId());
         dto.setCreatedAt(review.getCreatedAt());
 
-        // Si necesitas los IDs de usuarios que dieron like
+        // Si necesitas los ID de usuarios que dieron like
         if (review.getLikedBy() != null) {
             dto.setLikedByUserIds(review.getLikedBy().stream()
                     .map(User::getId)
@@ -215,7 +215,7 @@ public class RestaurantService {
                 .orElse(0.0);
     }
 */
-    private LocationDto toUbicacionDto(Location location) {
+    private LocationDto toLocationDto(Location location) {
         LocationDto dto = new LocationDto();
         dto.setLatitud(location.getLatitud());
         dto.setLongitud(location.getLongitud());

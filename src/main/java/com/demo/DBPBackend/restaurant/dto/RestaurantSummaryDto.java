@@ -8,6 +8,6 @@ public class RestaurantSummaryDto {
     private Long id;
     private String name;
     private String ownerName;
-    private LocationDto ubicacion;
+    private LocationDto locationDto;
     private Integer totalReviews;
 }

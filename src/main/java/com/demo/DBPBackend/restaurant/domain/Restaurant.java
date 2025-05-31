@@ -36,7 +36,7 @@ public class Restaurant {
     private User owner;
 
     @OneToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "ubicacion_id")
+    @JoinColumn(name = "location_id")
     private Location location;
 
     @OneToOne(cascade = CascadeType.ALL, optional = false)

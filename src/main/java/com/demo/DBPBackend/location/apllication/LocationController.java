@@ -22,7 +22,7 @@ public class LocationController {
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
      @GetMapping("/restaurants/{restaurantId}")
     public ResponseEntity<List<LocationDto>> getLocationsByRestaurant( @PathVariable Long id) {
-        List<LocationDto> locations = locationService.getLocationsByRestaurant(id);
+        List<LocationDto> locations = locationService.getLocationByRestaurant(id);
         return ResponseEntity.ok(locations);
     }
 

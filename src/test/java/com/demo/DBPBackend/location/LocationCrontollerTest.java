@@ -48,11 +48,11 @@ public class LocationCrontollerTest {
 
     @Test
     void testGetLocationsByRestaurant() {
-        when(locationService.getLocationsByRestaurant(1L)).thenReturn(List.of(locationDto));
+        when(locationService.getLocationByRestaurant(1L)).thenReturn(List.of(locationDto));
 
         ResponseEntity<List<LocationDto>> response = locationController.getLocationsByRestaurant(1L);
 
-        verify(locationService).getLocationsByRestaurant(1L);
+        verify(locationService).getLocationByRestaurant(1L);
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(1, response.getBody().size());
         assertEquals(40.0, response.getBody().get(0).getLatitud());
