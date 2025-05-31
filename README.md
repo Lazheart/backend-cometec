@@ -377,7 +377,6 @@ Cada pull request era revisado manualmente antes de su merge a main, asegurando:
 
 - Que se seguían las convenciones de codificación acordadas por el equipo.
 
-## Conclusion
 
 ## POSTMAN Collections
 Esta colección de Postman contiene los diferentes endpoints REST de nuestra aplicación Spring Boot. Está diseñada para facilitar la prueba y validación de las funcionalidades principales, incluyendo la gestión de usuarios, operaciones CRUD, autenticación y cualquier otro servicio expuesto por el backend.
