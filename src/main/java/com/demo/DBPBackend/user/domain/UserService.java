@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class  UserService {
 
     private final UserRepository userRepository;
     private final AuthUtils authorizationUtils;
