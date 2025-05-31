@@ -24,7 +24,7 @@ public class LocationService {
     private final RestaurantRepository restaurantRepository;
     private final ModelMapper modelMapper;
 
-    public List<LocationDto> getLocationsByRestaurant(Long restaurantId) {
+    public List<LocationDto> getLocationByRestaurant(Long restaurantId) {
         if (!restaurantRepository.existsById(restaurantId)) {
             throw new ResourceNotFoundException("Restaurante no encontrado con ID: " + restaurantId);
         }

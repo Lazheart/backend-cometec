@@ -49,14 +49,14 @@ public class RestaurantControllerTest {
 
         requestDto = new RestaurantRequestDto();
         requestDto.setName("Test Restaurant");
-        requestDto.setUbicacion(locationDto);
+        requestDto.setLocationDto(locationDto);
 
         responseDto = new RestaurantResponseDto();
         responseDto.setId(1L);
         responseDto.setName("Test Restaurant");
         responseDto.setOwnerId(1L);
         responseDto.setOwnerName("Owner");
-        responseDto.setUbicacion(locationDto);
+        responseDto.setLocationDto(locationDto);
         responseDto.setTotalReviews(5);
         responseDto.setHasMenu(true);
 
@@ -64,7 +64,7 @@ public class RestaurantControllerTest {
         summaryDto.setId(1L);
         summaryDto.setName("Test Restaurant");
         summaryDto.setOwnerName("Owner");
-        summaryDto.setUbicacion(locationDto);
+        summaryDto.setLocationDto(locationDto);
         summaryDto.setTotalReviews(5);
 
         menuResponseDto = new MenuResponseDto();

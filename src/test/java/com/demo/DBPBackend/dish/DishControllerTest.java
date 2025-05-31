@@ -3,6 +3,7 @@ package com.demo.DBPBackend.dish;
 import com.demo.DBPBackend.dish.application.DishController;
 import com.demo.DBPBackend.dish.domain.DishService;
 import com.demo.DBPBackend.dish.dto.*;
+import com.demo.DBPBackend.exceptions.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,154 +34,161 @@ class DishControllerTest {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    private DishResponseDto dishResponseDto;
+    private DishSummaryDto dishSummaryDto;
+    private DishRequestDto dishRequestDto;
+    private DishUpdateRequestDto dishUpdateRequestDto;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(dishController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(dishController)
+                .build();
+
+        // Initialize test data
+        dishResponseDto = new DishResponseDto();
+        dishResponseDto.setDishId(1L);
+        dishResponseDto.setName("Pizza");
+        dishResponseDto.setPrice(10.99);
+        dishResponseDto.setMenuId(1L);
+
+        dishSummaryDto = new DishSummaryDto();
+        dishSummaryDto.setId(1L);
+        dishSummaryDto.setName("Pizza");
+        dishSummaryDto.setDescription("Delicious pizza");
+        dishSummaryDto.setPrice(10.99);
+
+        dishRequestDto = new DishRequestDto();
+        dishRequestDto.setName("Pizza");
+        dishRequestDto.setPrice(10.99);
+        dishRequestDto.setDescription("Delicious pizza");
+        dishRequestDto.setMenuId(1L);
+
+        dishUpdateRequestDto = new DishUpdateRequestDto();
+        dishUpdateRequestDto.setDescription("Updated description");
     }
 
     @Test
-    void getAllDishes_ShouldReturnDishes() throws Exception {
+    void getAllDishes_ShouldReturnListOfDishes() throws Exception {
         // Arrange
-        DishResponseDto dish1 = new DishResponseDto();
-        dish1.setDishId(1L);
-        dish1.setName("Pizza");
-        dish1.setPrice(10.99);
-        dish1.setMenuId(1L);
-
-        DishResponseDto dish2 = new DishResponseDto();
-        dish2.setDishId(2L);
-        dish2.setName("Pasta");
-        dish2.setPrice(8.99);
-        dish2.setMenuId(1L);
-
-        List<DishResponseDto> dishes = Arrays.asList(dish1, dish2);
+        List<DishResponseDto> dishes = Arrays.asList(dishResponseDto);
         when(dishService.getAllDishes()).thenReturn(dishes);
 
         // Act & Assert
         mockMvc.perform(get("/dishes/all"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].dishId").value(1L))
                 .andExpect(jsonPath("$[0].name").value("Pizza"))
-                .andExpect(jsonPath("$[1].name").value("Pasta"));
+                .andExpect(jsonPath("$[0].price").value(10.99));
+
+        verify(dishService, times(1)).getAllDishes();
     }
 
     @Test
     void getDishById_ShouldReturnDish() throws Exception {
         // Arrange
-        DishResponseDto dish = new DishResponseDto();
-        dish.setDishId(1L);
-        dish.setName("Pizza");
-        dish.setPrice(10.99);
-        dish.setMenuId(1L);
-
-        when(dishService.getDishById(1L)).thenReturn(dish);
+        when(dishService.getDishById(1L)).thenReturn(dishResponseDto);
 
         // Act & Assert
-        mockMvc.perform(get("/dishes/1"))
+        mockMvc.perform(get("/dishes/{dishId}", 1L))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.dishId").value(1L))
                 .andExpect(jsonPath("$.name").value("Pizza"));
+
+        verify(dishService, times(1)).getDishById(1L);
     }
 
     @Test
-    void getDishesByMenu_ShouldReturnDishes() throws Exception {
+    void getDishById_ShouldReturnNotFoundWhenDishDoesNotExist() throws Exception {
         // Arrange
-        DishSummaryDto dish1 = new DishSummaryDto();
-        dish1.setId(1L);
-        dish1.setName("Pizza");
-        dish1.setDescription("Delicious pizza");
-        dish1.setPrice(10.99);
+        when(dishService.getDishById(anyLong())).thenThrow(new ResourceNotFoundException("Dish not found"));
 
-        DishSummaryDto dish2 = new DishSummaryDto();
-        dish2.setId(2L);
-        dish2.setName("Pasta");
-        dish2.setDescription("Tasty pasta");
-        dish2.setPrice(8.99);
+        // Act & Assert
+        mockMvc.perform(get("/dishes/{dishId}", 99L))
+                .andExpect(status().isNotFound());
 
-        List<DishSummaryDto> dishes = Arrays.asList(dish1, dish2);
+        verify(dishService, times(1)).getDishById(99L);
+    }
+
+    @Test
+    void getDishesByMenu_ShouldReturnListOfDishes() throws Exception {
+        // Arrange
+        List<DishSummaryDto> dishes = Arrays.asList(dishSummaryDto);
         when(dishService.getDishesByMenuId(1L)).thenReturn(dishes);
 
         // Act & Assert
-        mockMvc.perform(get("/dishes/carta/1"))
+        mockMvc.perform(get("/dishes/carta/{menuId}", 1L))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("Pizza"))
-                .andExpect(jsonPath("$[1].name").value("Pasta"));
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].name").value("Pizza"));
+
+        verify(dishService, times(1)).getDishesByMenuId(1L);
     }
 
     @Test
-    void getDishesByRestaurant_ShouldReturnDishes() throws Exception {
+    void getDishesByRestaurant_ShouldReturnListOfDishes() throws Exception {
         // Arrange
-        DishResponseDto dish1 = new DishResponseDto();
-        dish1.setDishId(1L);
-        dish1.setName("Pizza");
-        dish1.setPrice(10.99);
-        dish1.setMenuId(1L);
-
-        DishResponseDto dish2 = new DishResponseDto();
-        dish2.setDishId(2L);
-        dish2.setName("Pasta");
-        dish2.setPrice(8.99);
-        dish2.setMenuId(1L);
-
-        List<DishResponseDto> dishes = Arrays.asList(dish1, dish2);
+        List<DishResponseDto> dishes = Arrays.asList(dishResponseDto);
         when(dishService.getDishesByRestaurantId(1L)).thenReturn(dishes);
 
         // Act & Assert
-        mockMvc.perform(get("/dishes/restaurant/1"))
+        mockMvc.perform(get("/dishes/restaurant/{restaurantId}", 1L))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("Pizza"))
-                .andExpect(jsonPath("$[1].name").value("Pasta"));
+                .andExpect(jsonPath("$[0].dishId").value(1L))
+                .andExpect(jsonPath("$[0].name").value("Pizza"));
+
+        verify(dishService, times(1)).getDishesByRestaurantId(1L);
     }
 
     @Test
-    void createDish_ShouldReturnCreated() throws Exception {
+    void createDish_ShouldReturnCreatedStatus() throws Exception {
         // Arrange
-        DishRequestDto requestDto = new DishRequestDto();
-        requestDto.setName("Pizza");
-        requestDto.setPrice(10.99);
-        requestDto.setDescription("Delicious pizza");
-        requestDto.setMenuId(1L);
-
-        // Configuración para método void
         doNothing().when(dishService).createDish(any(DishRequestDto.class));
 
         // Act & Assert
         mockMvc.perform(post("/dishes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(dishRequestDto)))
                 .andExpect(status().isCreated());
 
-        // Verifica que se llamó al método
         verify(dishService, times(1)).createDish(any(DishRequestDto.class));
     }
 
     @Test
-    void updateDish_ShouldReturnOk() throws Exception {
+    void updateDish_ShouldReturnOkStatus() throws Exception {
         // Arrange
-        DishUpdateRequestDto updateDto = new DishUpdateRequestDto();
-        updateDto.setDescription("Updated description");
-
-        // Mock para método void (no se usa when())
-        doNothing().when(dishService).updateContent(1L, "Updated description");
+        doNothing().when(dishService).updateContent(eq(1L), anyString());
 
         // Act & Assert
-        mockMvc.perform(patch("/dishes/1")
+        mockMvc.perform(patch("/dishes/{dishId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateDto)))
+                        .content(objectMapper.writeValueAsString(dishUpdateRequestDto)))
                 .andExpect(status().isOk());
 
-        // Verifica que se llamó al método
-        verify(dishService, times(1)).updateContent(1L, "Updated description");
+        verify(dishService, times(1)).updateContent(eq(1L), eq("Updated description"));
     }
 
     @Test
-    void deleteDish_ShouldReturnNoContent() throws Exception {
+    void deleteDish_ShouldReturnNoContentStatus() throws Exception {
         // Arrange
         doNothing().when(dishService).deleteDish(1L);
 
         // Act & Assert
-        mockMvc.perform(delete("/dishes/1"))
+        mockMvc.perform(delete("/dishes/{dishId}", 1L))
                 .andExpect(status().isNoContent());
 
         verify(dishService, times(1)).deleteDish(1L);
+    }
+
+    @Test
+    void deleteDish_ShouldReturnNotFoundWhenDishDoesNotExist() throws Exception {
+        // Arrange
+        doThrow(new ResourceNotFoundException("Dish not found")).when(dishService).deleteDish(99L);
+
+        // Act & Assert
+        mockMvc.perform(delete("/dishes/{dishId}", 99L))
+                .andExpect(status().isNotFound());
+
+        verify(dishService, times(1)).deleteDish(99L);
     }
 }

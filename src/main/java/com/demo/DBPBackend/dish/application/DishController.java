@@ -26,7 +26,7 @@ public class DishController {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/{dishId}")
-    public ResponseEntity<DishResponseDto> getDishById(@PathVariable Long id) {
+    public ResponseEntity<DishResponseDto> getDishById(@PathVariable("dishId") Long id) {
         return ResponseEntity.ok(dishService.getDishById(id));
     }
 
@@ -51,14 +51,14 @@ public class DishController {
 
     @PreAuthorize("hasRole('OWNER')")
     @PatchMapping("/{dishId}")
-    public ResponseEntity<DishResponseDto> updateDish(@PathVariable Long id, @RequestBody DishUpdateRequestDto dto) {
+    public ResponseEntity<DishResponseDto> updateDish(@PathVariable("dishId") Long id, @RequestBody DishUpdateRequestDto dto) {
         dishService.updateContent(id, dto.getDescription());
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasRole('OWNER')")
     @DeleteMapping("/{dishId}")
-    public ResponseEntity<Void> deleteDish(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteDish(@PathVariable("dishId") Long id) {
         dishService.deleteDish(id);
         return ResponseEntity.noContent().build();
     }
