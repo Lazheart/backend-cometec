@@ -88,7 +88,7 @@ public class RestaurantService {
     }
 
     @Transactional
-    public void createRestaurant(RestaurantRequestDto dto) {
+    public RestaurantResponseDto createRestaurant(RestaurantRequestDto dto) {
         String email = authUtils.getCurrentUserEmail();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -97,14 +97,14 @@ public class RestaurantService {
         restaurant.setName(dto.getName());
         restaurant.setOwner(currentUser);
 
-        // Crear ubicación como entidad independiente
         Location location = new Location();
         location.setLatitud(dto.getLocationDto().getLatitud());
         location.setLongitud(dto.getLocationDto().getLongitud());
-
         restaurant.setLocation(location);
 
-        restaurantRepository.save(restaurant);
+        Restaurant savedRestaurant = restaurantRepository.save(restaurant);
+
+        return toRestaurantResponse(savedRestaurant);
     }
 
     @Transactional
