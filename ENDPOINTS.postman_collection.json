@@ -3,9 +3,9 @@
 		"_postman_id": "afc0fe12-815b-4a4c-9b70-2aca6cc83ae6",
 		"name": "ENDPOINTS",
 		"description": "1. Registrarte, debes seleccionar un Rol: OWNER, USER o ADMIN. Te retornará un Token que debes colocar en Authorization. El token pude durar hasta 24 horas.\n    \n2. Hacer el Login correspondiente, de esta manera se te autorizará para poder usar los endpoint a los que tu Rol tiene acceso.",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "45428891",
-		"_collection_link": "https://lazheart.postman.co/workspace/Lazheart's-Workspace~2eca68a4-0d71-4d01-88e7-ae8ef981f62c/collection/43513911-afc0fe12-815b-4a4c-9b70-2aca6cc83ae6?action=share&source=collection_link&creator=45428891"
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "43513911",
+		"_collection_link": "https://lazheart.postman.co/workspace/Lazheart's-Workspace~2eca68a4-0d71-4d01-88e7-ae8ef981f62c/collection/43513911-afc0fe12-815b-4a4c-9b70-2aca6cc83ae6?action=share&source=collection_link&creator=43513911"
 	},
 	"item": [
 		{
@@ -50,16 +50,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{base_url}}/auth/register",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"auth",
-								"register"
-							]
-						},
+						"url": "{{base_url}}/auth/register",
 						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
 					},
 					"response": []
@@ -113,16 +104,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{base_url}}/auth/login",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						},
+						"url": "{{base_url}}/auth/login",
 						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
 					},
 					"response": []
@@ -163,16 +145,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{base_url}}/auth/verify-password",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"auth",
-								"verify-password"
-							]
-						},
+						"url": "{{base_url}}/auth/verify-password",
 						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
 					},
 					"response": []
@@ -230,16 +203,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{base_url}}/user/me",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"user",
-								"me"
-							]
-						}
+						"url": "{{base_url}}/user/me"
 					},
 					"response": []
 				},
@@ -296,17 +260,7 @@
 								}
 							]
 						},
-						"url": {
-							"raw": "{{base_url}}/user/update/me",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"user",
-								"update",
-								"me"
-							]
-						}
+						"url": "{{base_url}}/user/update/me"
 					},
 					"response": []
 				},
@@ -451,16 +405,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/user/reviews",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"user",
-								"reviews"
-							]
-						}
+						"url": "{{base_url}}/user/reviews"
 					},
 					"response": []
 				},
@@ -501,16 +446,7 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/user/{{id}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"user",
-								"{{id}}"
-							]
-						}
+						"url": "{{base_url}}/user/{{id}}"
 					},
 					"response": []
 				},
@@ -519,16 +455,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/user/owned-restaurants",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"user",
-								"owned-restaurants"
-							]
-						}
+						"url": "{{base_url}}/user/owned-restaurants"
 					},
 					"response": []
 				}
@@ -554,7 +481,10 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"\r",
+									"const responseData = pm.response.json();\r",
+									"if (responseData.token) {\r",
+									"    pm.collectionVariables.set(\"restaurantId\", responseDataid);\r",
+									"}\r",
 									""
 								],
 								"type": "text/javascript",
@@ -574,15 +504,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{base_url}}/restaurants",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"restaurants"
-							]
-						}
+						"url": "{{base_url}}/restaurants"
 					},
 					"response": []
 				},
@@ -598,15 +520,7 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"url": {
-							"raw": "{{base_url}}/restaurants",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"restaurants"
-							]
-						}
+						"url": "{{base_url}}/restaurants"
 					},
 					"response": []
 				},
@@ -619,16 +533,7 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"url": {
-							"raw": "{{base_url}}/restaurants/{{restaurantId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"restaurants",
-								"{{restaurantId}}"
-							]
-						}
+						"url": "{{base_url}}/restaurants/{{restaurantId}}"
 					},
 					"response": []
 				},
@@ -637,17 +542,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/restaurants/{{restaurantId}}/menu",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"restaurants",
-								"{{restaurantId}}",
-								"menu"
-							]
-						}
+						"url": "{{base_url}}/restaurants/{{restaurantId}}/menu"
 					},
 					"response": []
 				},
@@ -656,17 +551,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/restaurants/{{restaurantId}}/comments",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"restaurants",
-								"{{restaurantId}}",
-								"comments"
-							]
-						}
+						"url": "{{base_url}}/restaurants/{{restaurantId}}/comments"
 					},
 					"response": []
 				},
@@ -675,17 +560,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/restaurants/{{restaurantId}}/reviews",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"restaurants",
-								"{{restaurantId}}",
-								"reviews"
-							]
-						}
+						"url": "{{base_url}}/restaurants/{{restaurantId}}/reviews"
 					},
 					"response": []
 				},
@@ -694,16 +569,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/restaurants/{{restaurantId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"restaurants",
-								"{{restaurantId}}"
-							]
-						}
+						"url": "{{base_url}}/restaurants/{{restaurantId}}"
 					},
 					"response": []
 				}
@@ -713,54 +579,9 @@
 			"name": "REVIEW",
 			"item": [
 				{
-					"name": "UpdateReview",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"content\": \"Texto actualizado de la reseña.\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/content/{{reviewId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"content",
-								"{{reviewId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetReviewById",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/reviews/{{reviewId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"reviews",
-								"{{reviewId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "CreateReview",
 					"request": {
-						"method": "PUT",
+						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "formdata",
@@ -777,20 +598,39 @@
 								},
 								{
 									"key": "content",
-									"value": "",
+									"value": "PrimeraMensaje",
 									"type": "text"
 								}
 							]
 						},
-						"url": {
-							"raw": "{{base_url}}/reviews",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"reviews"
-							]
-						}
+						"url": "{{base_url}}/content/{{reviewId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateReview",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"content\": \" Mensaje de actualizacion\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/content/{{reviewId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "GetReviewById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/reviews/{{reviewId}}"
 					},
 					"response": []
 				},
@@ -799,41 +639,16 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/reviews/{{reviewId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"reviews",
-								"{{reviewId}}"
-							]
-						}
+						"url": "{{base_url}}/reviews/{{reviewId}}"
 					},
 					"response": []
 				},
 				{
 					"name": "GetReviewByRestuarantId",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Add your name in the body\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/restaurant/{{restaurantId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"restaurant",
-								"{{restaurantId}}"
-							]
-						}
+						"url": "{{base_url}}/restaurant/{{restaurantId}}"
 					},
 					"response": []
 				}
@@ -842,6 +657,42 @@
 		{
 			"name": "COMMENT",
 			"item": [
+				{
+					"name": "CreateComment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									"",
+									"const responseData = pm.response.json();",
+									"pm.collectionVariables.set(\"commentId\", responseData.id); "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\": \"¡Totalmente de acuerdo con tu reseña!\",\n    \"userId\": 1,\n    \"reviewId\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/reviews/{{reviewId}}/comments",
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
 				{
 					"name": "GetComment",
 					"event": [
@@ -861,62 +712,8 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/reviews/{{reviewId}}/comments",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"reviews",
-								"{{reviewId}}",
-								"comments"
-							]
-						},
+						"url": "{{base_url}}/reviews/{{reviewId}}/comments",
 						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
-					},
-					"response": []
-				},
-				{
-					"name": "AddComment",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Successful POST request\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
-									"});",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/reviews/{{reviewId}}/comments",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"reviews",
-								"{{reviewId}}",
-								"comments"
-							]
-						},
-						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
 					},
 					"response": []
 				},
@@ -938,27 +735,18 @@
 						}
 					],
 					"request": {
-						"method": "PUT",
+						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"content\": \"¡Totalmente de acuerdo con tu reseña!\",\n    \"userId\": 1,\n    \"reviewId\": 3\n}",
+							"raw": "{\n    \"content\": \"Nuevo texto del comentario actualizado\",\n    \"userId\": 1,\n    \"reviewId\": 3\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": {
-							"raw": "{{base_url}}/comments/{{commentId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"comments",
-								"{{commentId}}"
-							]
-						},
+						"url": "{{base_url}}/comments/{{commentId}}",
 						"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
 					},
 					"response": []
@@ -992,16 +780,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{base_url}}/comments/{{commentId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"comments",
-								"{{commentId}}"
-							]
-						},
+						"url": "{{base_url}}/comments/{{commentId}}",
 						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
 					},
 					"response": []
@@ -1030,16 +809,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/menu/{{menuId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"menu",
-								"{{menuId}}"
-							]
-						},
+						"url": "{{base_url}}/menu/{{menuId}}",
 						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
 					},
 					"response": []
@@ -1073,16 +843,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{base_url}}/restaurants/{{restaurantId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"restaurants",
-								"{{restaurantId}}"
-							]
-						},
+						"url": "{{base_url}}/restaurants/{{restaurantId}}",
 						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
 					},
 					"response": []
@@ -1116,16 +877,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{base_url}}/menu/{{menuId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"menu",
-								"{{menuId}}"
-							]
-						},
+						"url": "{{base_url}}/menu/{{menuId}}",
 						"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
 					},
 					"response": []
@@ -1150,17 +902,7 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/menu/restaurants/{{restaurantId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"menu",
-								"restaurants",
-								"{{restaurantId}}"
-							]
-						},
+						"url": "{{base_url}}/menu/restaurants/{{restaurantId}}",
 						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
 					},
 					"response": []
@@ -1189,17 +931,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/menus/{{menuId}}/dishes",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"menus",
-								"{{menuId}}",
-								"dishes"
-							]
-						},
+						"url": "{{base_url}}/menus/{{menuId}}/dishes",
 						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
 					},
 					"response": []
@@ -1233,15 +965,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{base_url}}/",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								""
-							]
-						},
+						"url": "{{base_url}}/",
 						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
 					},
 					"response": []
@@ -1275,16 +999,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{base_url}}/comments/{{commentId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"comments",
-								"{{commentId}}"
-							]
-						},
+						"url": "{{base_url}}/comments/{{commentId}}",
 						"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
 					},
 					"response": []
@@ -1318,16 +1033,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{base_url}}/comments/{{commentId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"comments",
-								"{{commentId}}"
-							]
-						},
+						"url": "{{base_url}}/comments/{{commentId}}",
 						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
 					},
 					"response": []
@@ -1342,17 +1048,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/locations/restaurants/{{restaurantId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"locations",
-								"restaurants",
-								"{{restaurantId}}"
-							]
-						}
+						"url": "{{base_url}}/locations/restaurants/{{restaurantId}}"
 					},
 					"response": []
 				},
@@ -1361,17 +1057,7 @@
 					"request": {
 						"method": "POST",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/locations/restaurants/{{restaurantId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"locations",
-								"restaurants",
-								"{{restaurantId}}"
-							]
-						}
+						"url": "{{base_url}}/locations/restaurants/{{restaurantId}}"
 					},
 					"response": []
 				},
@@ -1380,16 +1066,7 @@
 					"request": {
 						"method": "PUT",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/locations/{{locationId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"locations",
-								"{{locationId}}"
-							]
-						}
+						"url": "{{base_url}}/locations/{{locationId}}"
 					},
 					"response": []
 				},
@@ -1398,16 +1075,7 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/locations/{{locationId}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"locations",
-								"{{locationId}}"
-							]
-						}
+						"url": "{{base_url}}/locations/{{locationId}}"
 					},
 					"response": []
 				}
@@ -1416,13 +1084,9 @@
 	],
 	"auth": {
 		"type": "bearer",
-		"bearer": [
-			{
-				"key": "token",
-				"value": "{{token}}",
-				"type": "string"
-			}
-		]
+		"bearer": {
+			"token": "{{token}}"
+		}
 	},
 	"event": [
 		{
