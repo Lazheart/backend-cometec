@@ -9,6 +9,7 @@ import com.demo.DBPBackend.user.domain.User;
 import com.demo.DBPBackend.user.infrastructure.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.TypeCollector;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,17 +26,24 @@ public class CommentService {
 
     private final UserRepository userRepository;
 
-    public void createComment(CommentRequestDto commentRequestDto) {
+    public CommentResponseDto createComment(CommentRequestDto commentRequestDto) {
         Comment comment = new Comment();
         comment.setContent(commentRequestDto.getContent());
         comment.setCreatedAt(LocalDateTime.now());
-        Review review = reviewRepository.findById(commentRequestDto.getReviewId()).
-                orElseThrow(() -> new RuntimeException("Post not found"));
+        Review review = reviewRepository.findById(commentRequestDto.getReviewId())
+                .orElseThrow(() -> new RuntimeException("Post not found"));
         comment.setReview(review);
-        User user = userRepository.findById(commentRequestDto.getUserId()).
-                orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(commentRequestDto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
         comment.setUser(user);
-        commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(comment);
+
+        CommentResponseDto responseDto = new CommentResponseDto();
+        responseDto.setId(savedComment.getId());
+        responseDto.setContent(savedComment.getContent());
+        responseDto.setReviewId(savedComment.getReview().getId());
+        responseDto.setUserId(savedComment.getUser().getId());
+        return responseDto;
     }
 
     public List<CommentResponseDto> getCommentsByReviewId(Long reviewId) {
