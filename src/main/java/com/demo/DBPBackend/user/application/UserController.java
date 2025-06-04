@@ -4,8 +4,10 @@ import com.demo.DBPBackend.comment.dto.CommentResponseDto;
 import com.demo.DBPBackend.restaurant.dto.RestaurantResponseDto;
 import com.demo.DBPBackend.review.dto.ReviewResponseDto;
 import com.demo.DBPBackend.user.domain.UserService;
+import com.demo.DBPBackend.user.dto.UserPublicUpdateDto;
 import com.demo.DBPBackend.user.dto.UserRequestDto;
 import com.demo.DBPBackend.user.dto.UserResponseDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -48,6 +50,14 @@ public class UserController {
     @PatchMapping("/update/me")
     public ResponseEntity<Void> updateUser(@ModelAttribute UserRequestDto updatedUser){
         userService.updateUser(updatedUser);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/public/{id}/update-info")
+    public ResponseEntity<Void> updatePublicUserInfo(
+            @PathVariable Long id,
+            @RequestBody @Valid UserPublicUpdateDto updatedInfo) {
+        userService.updatePublicUserInfo(id, updatedInfo);
         return ResponseEntity.noContent().build();
     }
 

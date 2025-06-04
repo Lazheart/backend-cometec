@@ -7,6 +7,7 @@ import com.demo.DBPBackend.exceptions.UnauthorizedOperationException;
 import com.demo.DBPBackend.restaurant.domain.Restaurant;
 import com.demo.DBPBackend.restaurant.dto.RestaurantResponseDto;
 import com.demo.DBPBackend.review.dto.ReviewResponseDto;
+import com.demo.DBPBackend.user.dto.UserPublicUpdateDto;
 import com.demo.DBPBackend.user.dto.UserRequestDto;
 import com.demo.DBPBackend.user.dto.UserResponseDto;
 import com.demo.DBPBackend.user.infrastructure.UserRepository;
@@ -17,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,6 +74,18 @@ public class  UserService {
         }
 
         userRepository.save(existingUser);
+    }
+
+    @Transactional
+    public void updatePublicUserInfo(Long id, UserPublicUpdateDto updatedInfo) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        user.setName(updatedInfo.getName());
+        user.setLastname(updatedInfo.getLastname());
+        user.setPhone(updatedInfo.getPhone());
+
+        userRepository.save(user);
     }
 
     @Transactional
