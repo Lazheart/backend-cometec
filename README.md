@@ -124,17 +124,18 @@ Comentarios sobre reseñas existentes.
 ## Endpoints 🛣️
 
 ### 👤 User
-| Método | EndPoint                      | Descripción                          | Roles Permitidos |
-| ------ | ----------------------------- | ------------------------------------ | ---------------- |
-| GET    | `/user/me`                    | Obtener información del usuario actual | USER             |
-| GET    | `/user/{id}`                  | Obtener información de un usuario por ID | ADMIN           |
-| GET    | `/user/all`                   | Listar todos los usuarios            | ADMIN            |
-| PATCH  | `/user/update/me`             | Actualizar información del usuario actual | USER           |
-| DELETE | `/user/{id}`                  | Eliminar usuario                     | ADMIN            |
-| GET    | `/user/favourites`            | Obtener restaurantes favoritos       | USER             |
-| GET    | `/user/owned-restaurants`     | Obtener restaurantes propiedad del usuario | OWNER        |
-| GET    | `/user/comments`              | Obtener comentarios del usuario      | USER             |
-| GET    | `/user/reviews`               | Obtener reseñas del usuario          | USER             |
+| Método | EndPoint                      | Descripción                                      | Roles Permitidos |
+| ------ | ----------------------------- |--------------------------------------------------|------------------|
+| GET    | `/user/me`                    | Obtener información del usuario actual           | USER             |
+| GET    | `/user/{id}`                  | Obtener información de un usuario por ID         | ADMIN            |
+| GET    | `/user/all`                   | Listar todos los usuarios                        | ADMIN            |
+| PATCH  | `/user/update/me`             | Actualizar información del usuario actual        | USER             |
+| PATCH  | `/user/update/{id}`           | Actualizar Credenciales de acceso de tu usario   | USER             |
+| DELETE | `/user/{id}`                  | Eliminar usuario                                 | ADMIN            |
+| GET    | `/user/favourites`            | Obtener restaurantes favoritos                   | USER             |
+| GET    | `/user/owned-restaurants`     | Obtener restaurantes propiedad del usuario       | OWNER            |
+| GET    | `/user/comments`              | Obtener comentarios del usuario                  | USER             |
+| GET    | `/user/reviews`               | Obtener reseñas del usuario                      | USER             |
 
 ### 🍽️ Restaurant
 | Método | EndPoint                      | Descripción                          | Roles Permitidos |

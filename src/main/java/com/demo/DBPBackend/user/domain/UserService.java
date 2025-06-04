@@ -77,8 +77,9 @@ public class  UserService {
     }
 
     @Transactional
-    public void updatePublicUserInfo(Long id, UserPublicUpdateDto updatedInfo) {
-        User user = userRepository.findById(id)
+    public void updatePublicUserInfo(UserPublicUpdateDto updatedInfo) {
+        String email = authorizationUtils.getCurrentUserEmail(); // Obtiene el email del token
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         user.setName(updatedInfo.getName());

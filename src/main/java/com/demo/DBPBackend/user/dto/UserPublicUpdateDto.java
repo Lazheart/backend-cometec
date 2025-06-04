@@ -16,6 +16,6 @@ public class UserPublicUpdateDto {
     private String lastname;
 
     @NotBlank(message = "El teléfono es obligatorio")
-    @Pattern(regexp = "^[0-9]{10,15}$", message = "Teléfono inválido")
+    @Pattern(regexp = "^[0-9]{9,15}$", message = "Teléfono inválido")
     private String phone;
 }

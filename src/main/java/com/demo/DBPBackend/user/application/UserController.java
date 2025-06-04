@@ -55,9 +55,8 @@ public class UserController {
     @PreAuthorize("hasRole('USER')")
     @PatchMapping("/update/me")
     public ResponseEntity<Void> updatePublicUserInfo(
-            @PathVariable Long id,
             @RequestBody @Valid UserPublicUpdateDto updatedInfo) {
-        userService.updatePublicUserInfo(id, updatedInfo);
+        userService.updatePublicUserInfo(updatedInfo);
         return ResponseEntity.noContent().build();
     }
 
