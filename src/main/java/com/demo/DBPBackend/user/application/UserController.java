@@ -47,13 +47,13 @@ public class UserController {
 
 
     @PreAuthorize("hasRole('USER')")
-    @PatchMapping("/update/me")
+    @PatchMapping("/security/me")
     public ResponseEntity<Void> updateUser(@ModelAttribute UserRequestDto updatedUser){
         userService.updateUser(updatedUser);
         return ResponseEntity.noContent().build();
     }
-
-    @PatchMapping("/public/{id}/update-info")
+    @PreAuthorize("hasRole('USER')")
+    @PatchMapping("/update/me")
     public ResponseEntity<Void> updatePublicUserInfo(
             @PathVariable Long id,
             @RequestBody @Valid UserPublicUpdateDto updatedInfo) {
