@@ -41,7 +41,10 @@ public class AuthService {
 
     public JwtAuthResponseDto register(RegisterDto registerDto) {
         if (userRepository.findByEmail(registerDto.getEmail()).isPresent()) {
-            throw new UserAlreadyExistException("User already exist");
+            throw new UserAlreadyExistException("Email already registered");
+        }
+        if (userRepository.findByPhone(registerDto.getPhone()).isPresent()) {
+            throw new UserAlreadyExistException("Phone number already registered");
         }
 
         applicationEventPublisher.publishEvent(new RegisterEvent(registerDto.getEmail(), registerDto.getName()));
