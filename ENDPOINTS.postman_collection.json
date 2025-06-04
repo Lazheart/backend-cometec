@@ -43,7 +43,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"lazheart@gmail.com\",\n    \"password\": \"password\",\n    \"name\": \"lazheart\",\n    \"lastname\": \"label \",\n    \"phone\": \"905690545\",\n    \"role\": \"USER\"  //OWNER OR USER\n }",
+							"raw": "{\n    \"email\": \"luciana.yangali@utec.edu.pe\",\n    \"password\": \"password\",\n    \"name\": \"luciana\",\n    \"lastname\": \"yangali \",\n    \"phone\": \"900000456\",\n    \"role\": \"OWNER\"  //OWNER OR USER\n }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -97,7 +97,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"notlazheart@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
+							"raw": "{\r\n    \"email\": \"luciana.yangali@utec.edu.pe\",\r\n    \"password\": \"password\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -208,14 +208,14 @@
 					"response": []
 				},
 				{
-					"name": "UpdateMe",
+					"name": "UpdateCredentials",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
 									"pm.test(\"Actualizado correctamente. Logéate de nuevo.\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.have.status(204);\r",
 									"});\r",
 									"\r",
 									""
@@ -240,25 +240,43 @@
 							"formdata": [
 								{
 									"key": "name",
-									"value": "Falito",
+									"value": "notLuciana",
 									"type": "text"
 								},
 								{
 									"key": "password",
-									"value": "12345678",
+									"value": "password",
 									"type": "text"
 								},
 								{
 									"key": "email",
-									"value": "danielrestaurante@gmail.com",
+									"value": "benjamin.llerena@utec.edu.pe",
 									"type": "text"
 								},
 								{
 									"key": "phone",
-									"value": "908590646",
+									"value": "907690646",
 									"type": "text"
 								}
 							]
+						},
+						"url": "{{base_url}}/user/security/me"
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateMe",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"NuevoNombre\",\r\n  \"lastname\": \"NuevoApellido\",\r\n  \"phone\": \"9876543210\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": "{{base_url}}/user/update/me"
 					},
@@ -291,11 +309,7 @@
 									"// Verifica que el user_id exista\r",
 									"if (!pm.collectionVariables.get(\"id\")) {\r",
 									"    throw new Error(\"Id no encontrado. Ejecuta GetMe primero.\");\r",
-									"}\r",
-									"\r",
-									"// Opcional: Imprime valores para debug\r",
-									"console.log(\"Token:\", pm.collectionVariables.get(\"token\"));\r",
-									"console.log(\"User ID:\", pm.collectionVariables.get(\"id\"));"
+									"}"
 								],
 								"type": "text/javascript",
 								"packages": {}
