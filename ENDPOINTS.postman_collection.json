@@ -271,7 +271,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"NuevoNombre\",\r\n  \"lastname\": \"NuevoApellido\",\r\n  \"phone\": \"9876543210\"\r\n}",
+							"raw": "{\r\n  \"name\": \"Benjamin\",\r\n  \"lastname\": \"Torres\",\r\n  \"phone\": \"963270535\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

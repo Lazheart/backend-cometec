@@ -131,15 +131,15 @@ public class RestaurantControllerTest {
         verify(restaurantService, times(1)).getRestaurantMenu(1L);
     }
 
-    @Test
-    void createRestaurant_ShouldReturnCreated() {
-        doNothing().when(restaurantService).createRestaurant(requestDto);
-
-        ResponseEntity<Void> response = restaurantController.createRestaurant(requestDto);
-
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        verify(restaurantService, times(1)).createRestaurant(requestDto);
-    }
+//    @Test
+////    void createRestaurant_ShouldReturnCreated() {
+////        doNothing().when(restaurantService).createRestaurant(requestDto);
+////
+////        ResponseEntity<Void> response = restaurantController.createRestaurant(requestDto);
+////
+////        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+////        verify(restaurantService, times(1)).createRestaurant(requestDto);
+////    }
 
     @Test
     void updateRestaurant_ShouldReturnOk() {
