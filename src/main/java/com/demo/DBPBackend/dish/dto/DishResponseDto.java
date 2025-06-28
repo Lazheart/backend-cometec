@@ -1,11 +1,15 @@
 package com.demo.DBPBackend.dish.dto;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Setter
+@Getter
 public class DishResponseDto {
-    private Long DishId;
+    private Long id;
     private String name;
+    private String description;
     private Double price;
     private Long menuId;
 }

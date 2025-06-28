@@ -24,15 +24,17 @@ public class LocationService {
     private final RestaurantRepository restaurantRepository;
     private final ModelMapper modelMapper;
 
-    public List<LocationDto> getLocationByRestaurant(Long restaurantId) {
+    public LocationDto getLocationByRestaurant(Long restaurantId) {
         if (!restaurantRepository.existsById(restaurantId)) {
             throw new ResourceNotFoundException("Restaurante no encontrado con ID: " + restaurantId);
         }
 
-        List<Location> locations = locationRepository.findByRestaurantId(restaurantId);
-        return locations.stream()
-                .map(location -> modelMapper.map(location, LocationDto.class))
-                .collect(Collectors.toList());
+        Location location = locationRepository.findByRestaurantId(restaurantId)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró ubicación para el restaurante con ID: " + restaurantId));
+        
+        return modelMapper.map(location, LocationDto.class);
     }
 
     @Transactional
