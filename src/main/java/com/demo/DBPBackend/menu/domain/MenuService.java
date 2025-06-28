@@ -16,6 +16,9 @@ import com.demo.DBPBackend.user.domain.User;
 import com.demo.DBPBackend.user.infrastructure.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +34,14 @@ public class MenuService {
     private final UserRepository userRepository;
     private final AuthUtils authUtils;
 
+    // Métodos de paginación agregados
+    public Page<MenuResponseDto> getAllMenus(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Menu> menuPage = menuRepository.findAll(pageable);
+        return menuPage.map(this::toMenuResponseDto);
+    }
+
+    // Métodos originales sin cambios
     @Transactional
     public void createMenu(MenuRequestDto dto) {
         String email = authUtils.getCurrentUserEmail();
@@ -67,6 +78,23 @@ public class MenuService {
     public MenuResponseDto getMenuById(Long id) {
         Menu menu = menuRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Menu not found"));
+
+        MenuResponseDto dto = new MenuResponseDto();
+        dto.setId(menu.getId());
+        dto.setRestaurantId(menu.getRestaurant().getId());
+        dto.setRestaurantName(menu.getRestaurant().getName());
+
+        List<DishSummaryDto> dishSummaries = menu.getDishes().stream()
+                .map(this::toDishSummary)
+                .collect(Collectors.toList());
+        dto.setDishes(dishSummaries);
+
+        return dto;
+    }
+
+    public MenuResponseDto getMenuByRestaurantId(Long restaurantId) {
+        Menu menu = menuRepository.findByRestaurantId(restaurantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Menu not found for restaurant with id: " + restaurantId));
 
         MenuResponseDto dto = new MenuResponseDto();
         dto.setId(menu.getId());
@@ -127,6 +155,22 @@ public class MenuService {
         dto.setId(dish.getId());
         dto.setName(dish.getName());
         dto.setPrice(dish.getPrice());
+        return dto;
+    }
+
+    // Método auxiliar para paginación
+    private MenuResponseDto toMenuResponseDto(Menu menu) {
+        MenuResponseDto dto = new MenuResponseDto();
+        dto.setId(menu.getId());
+        dto.setRestaurantId(menu.getRestaurant().getId());
+        dto.setRestaurantName(menu.getRestaurant().getName());
+        
+        // Mapear las entidades Dish a DTOs DishSummaryDto
+        List<DishSummaryDto> dishSummaries = menu.getDishes().stream()
+            .map(this::toDishSummary)
+            .collect(Collectors.toList());
+        dto.setDishes(dishSummaries);
+        
         return dto;
     }
 }

@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/locations")
 @RequiredArgsConstructor
@@ -21,15 +19,15 @@ public class LocationController {
 
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
      @GetMapping("/restaurants/{restaurantId}")
-    public ResponseEntity<List<LocationDto>> getLocationsByRestaurant( @PathVariable Long id) {
-        List<LocationDto> locations = locationService.getLocationByRestaurant(id);
-        return ResponseEntity.ok(locations);
+    public ResponseEntity<LocationDto> getLocationByRestaurant( @PathVariable Long restaurantId) {
+        LocationDto location = locationService.getLocationByRestaurant(restaurantId);
+        return ResponseEntity.ok(location);
     }
 
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @PostMapping("/restaurants/{restaurantId}")
-    public ResponseEntity<LocationDto> addLocationToRestaurant( @PathVariable Long id, @RequestBody LocationCreateDTO locationCreateDTO) {
-        LocationDto createdLocation = locationService.addLocationToRestaurant(id, locationCreateDTO);
+    public ResponseEntity<LocationDto> addLocationToRestaurant( @PathVariable Long restaurantId, @RequestBody LocationCreateDTO locationCreateDTO) {
+        LocationDto createdLocation = locationService.addLocationToRestaurant(restaurantId, locationCreateDTO);
         return new ResponseEntity<>(createdLocation, HttpStatus.CREATED);
     }
 
