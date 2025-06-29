@@ -3,12 +3,11 @@ package com.demo.DBPBackend.dish.application;
 import com.demo.DBPBackend.dish.domain.DishService;
 import com.demo.DBPBackend.dish.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/dishes")
@@ -17,29 +16,95 @@ public class DishController {
 
     private final DishService dishService;
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
-    public ResponseEntity<List<DishResponseDto>> getAllDishes() {
-        List<DishResponseDto> response = dishService.getAllDishes();
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Page<DishResponseDto>> getAllDishes(@RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(dishService.getAllDishes(page, size));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    @GetMapping("/{dishId}")
-    public ResponseEntity<DishResponseDto> getDishById(@PathVariable("dishId") Long id) {
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/all/name")
+    public ResponseEntity<Page<DishResponseDto>> getAllDishesOrderedByName(@RequestParam(defaultValue = "0") int page,
+                                                                           @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(dishService.getAllDishesOrderedByName(page, size));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/all/price-asc")
+    public ResponseEntity<Page<DishResponseDto>> getAllDishesOrderedByPriceAsc(@RequestParam(defaultValue = "0") int page,
+                                                                               @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(dishService.getAllDishesOrderedByPriceAsc(page, size));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/all/price-desc")
+    public ResponseEntity<Page<DishResponseDto>> getAllDishesOrderedByPriceDesc(@RequestParam(defaultValue = "0") int page,
+                                                                                @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(dishService.getAllDishesOrderedByPriceDesc(page, size));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<DishResponseDto> getDishById(@PathVariable Long id) {
         return ResponseEntity.ok(dishService.getDishById(id));
     }
 
-    @PreAuthorize("hasAnyRole('USER')")
-    @GetMapping("/carta/{menuId}")
-    public ResponseEntity<List<DishSummaryDto>> getDishesByMenu(@PathVariable Long menuId) {
-        return ResponseEntity.ok(dishService.getDishesByMenuId(menuId));
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/menu/{menuId}")
+    public ResponseEntity<Page<DishSummaryDto>> getDishesByMenu(@PathVariable Long menuId,
+                                                                @RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(dishService.getDishesByMenuId(menuId, page, size));
     }
 
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/menu/{menuId}/name")
+    public ResponseEntity<Page<DishSummaryDto>> getDishesByMenuOrderedByName(@PathVariable Long menuId,
+                                                                             @RequestParam(defaultValue = "0") int page,
+                                                                             @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(dishService.getDishesByMenuIdOrderedByName(menuId, page, size));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/menu/{menuId}/price-asc")
+    public ResponseEntity<Page<DishSummaryDto>> getDishesByMenuOrderedByPriceAsc(@PathVariable Long menuId,
+                                                                                 @RequestParam(defaultValue = "0") int page,
+                                                                                 @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(dishService.getDishesByMenuIdOrderedByPriceAsc(menuId, page, size));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/menu/{menuId}/price-desc")
+    public ResponseEntity<Page<DishSummaryDto>> getDishesByMenuOrderedByPriceDesc(@PathVariable Long menuId,
+                                                                                  @RequestParam(defaultValue = "0") int page,
+                                                                                  @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(dishService.getDishesByMenuIdOrderedByPriceDesc(menuId, page, size));
+    }
+
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/restaurant/{restaurantId}")
-    public ResponseEntity<List<DishResponseDto>> getDishesByRestaurant(@PathVariable Long restaurantId) {
-        return ResponseEntity.ok(dishService.getDishesByRestaurantId(restaurantId));
+    public ResponseEntity<Page<DishResponseDto>> getDishesByRestaurant(@PathVariable Long restaurantId,
+                                                                       @RequestParam(defaultValue = "0") int page,
+                                                                       @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(dishService.getDishesByRestaurantId(restaurantId, page, size));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/name")
+    public ResponseEntity<Page<DishResponseDto>> getDishesByName(@RequestParam String name,
+                                                                 @RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(dishService.getDishesByName(name, page, size));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/price")
+    public ResponseEntity<Page<DishResponseDto>> getDishesByPriceRange(@RequestParam Double minPrice,
+                                                                       @RequestParam Double maxPrice,
+                                                                       @RequestParam(defaultValue = "0") int page,
+                                                                       @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(dishService.getDishesByPriceRange(minPrice, maxPrice, page, size));
     }
 
     @PreAuthorize("hasRole('OWNER')")
@@ -50,15 +115,15 @@ public class DishController {
     }
 
     @PreAuthorize("hasRole('OWNER')")
-    @PatchMapping("/{dishId}")
-    public ResponseEntity<DishResponseDto> updateDish(@PathVariable("dishId") Long id, @RequestBody DishUpdateRequestDto dto) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> updateDish(@PathVariable Long id, @RequestBody DishUpdateRequestDto dto) {
         dishService.updateContent(id, dto.getDescription());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasRole('OWNER')")
-    @DeleteMapping("/{dishId}")
-    public ResponseEntity<Void> deleteDish(@PathVariable("dishId") Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDish(@PathVariable Long id) {
         dishService.deleteDish(id);
         return ResponseEntity.noContent().build();
     }

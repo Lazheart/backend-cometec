@@ -17,8 +17,13 @@ import com.demo.DBPBackend.user.domain.User;
 import com.demo.DBPBackend.user.infrastructure.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
+import java.text.Normalizer;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,10 +35,35 @@ public class RestaurantService {
     private final UserRepository userRepository;
     private final AuthUtils authUtils;
 
-    public List<RestaurantSummaryDto> getAllRestaurants() {
-        return restaurantRepository.findAll().stream()
-                .map(this::toRestaurantSummary)
-                .collect(Collectors.toList());
+    public Page<RestaurantSummaryDto> getAllRestaurants(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Restaurant> restaurants = restaurantRepository.findAll(pageable);
+        return restaurants.map(this::toRestaurantSummary);
+    }
+
+    public Page<RestaurantSummaryDto> getRestaurantsByName(String name, int page, int size) {
+        String normalizedName = normalizeText(name);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Restaurant> restaurants = restaurantRepository.findByNameContaining(normalizedName, pageable);
+        return restaurants.map(this::toRestaurantSummary);
+    }
+
+    public Page<RestaurantSummaryDto> getRestaurantsByOwnerId(Long ownerId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Restaurant> restaurants = restaurantRepository.findByOwnerIdOrderByIdDesc(ownerId, pageable);
+        return restaurants.map(this::toRestaurantSummary);
+    }
+
+    public Page<RestaurantSummaryDto> getAllRestaurantsOrderedByName(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Restaurant> restaurants = restaurantRepository.findAllByOrderByNameAsc(pageable);
+        return restaurants.map(this::toRestaurantSummary);
+    }
+
+    public Page<RestaurantSummaryDto> getAllRestaurantsOrderedById(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Restaurant> restaurants = restaurantRepository.findAllByOrderByIdDesc(pageable);
+        return restaurants.map(this::toRestaurantSummary);
     }
 
     public RestaurantResponseDto getRestaurantById(Long id) {
@@ -43,23 +73,47 @@ public class RestaurantService {
         return toRestaurantResponse(restaurant);
     }
 
-    public List<ReviewResponseDto> getRestaurantReviews(Long id) {
+    public Page<ReviewResponseDto> getRestaurantReviews(Long id, int page, int size) {
         Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
 
-        return restaurant.getValoraciones().stream()
+        // Como no hay método directo en el repositorio, usamos stream con paginación manual
+        List<ReviewResponseDto> allReviews = restaurant.getValoraciones().stream()
                 .map(this::toReviewResponse)
                 .collect(Collectors.toList());
+        
+        // Paginación manual
+        int start = page * size;
+        int end = Math.min(start + size, allReviews.size());
+        
+        if (start >= allReviews.size()) {
+            return Page.empty(PageRequest.of(page, size));
+        }
+        
+        List<ReviewResponseDto> pageContent = allReviews.subList(start, end);
+        return new PageImpl<>(pageContent, PageRequest.of(page, size), allReviews.size());
     }
 
-    public List<CommentResponseDto> getRestaurantComments(Long id) {
+    public Page<CommentResponseDto> getRestaurantComments(Long id, int page, int size) {
         Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
 
-        return restaurant.getValoraciones().stream()
+        // Como no hay método directo en el repositorio, usamos stream con paginación manual
+        List<CommentResponseDto> allComments = restaurant.getValoraciones().stream()
                 .flatMap(review -> review.getComments().stream())
                 .map(this::toCommentResponse)
                 .collect(Collectors.toList());
+        
+        // Paginación manual
+        int start = page * size;
+        int end = Math.min(start + size, allComments.size());
+        
+        if (start >= allComments.size()) {
+            return Page.empty(PageRequest.of(page, size));
+        }
+        
+        List<CommentResponseDto> pageContent = allComments.subList(start, end);
+        return new PageImpl<>(pageContent, PageRequest.of(page, size), allComments.size());
     }
 
     public MenuResponseDto getRestaurantMenu(Long id) {
@@ -118,7 +172,6 @@ public class RestaurantService {
 
         restaurant.setName(dto.getName());
 
-        // Actualizar ubicación como entidad independiente
         Location location = restaurant.getLocation();
         location.setLatitud(dto.getLocationDto().getLatitud());
         location.setLongitud(dto.getLocationDto().getLongitud());
@@ -136,6 +189,13 @@ public class RestaurantService {
         }
 
         restaurantRepository.delete(restaurant);
+    }
+
+    private String normalizeText(String text) {
+        return Normalizer.normalize(text, Normalizer.Form.NFC)
+                .replaceAll("[''']", "'")
+                .replaceAll("\\p{M}", "")
+                .toLowerCase();
     }
 
     private RestaurantSummaryDto toRestaurantSummary(Restaurant restaurant) {
@@ -163,34 +223,13 @@ public class RestaurantService {
     private ReviewResponseDto toReviewResponse(Review review) {
         ReviewResponseDto dto = new ReviewResponseDto();
         dto.setId(review.getId());
-        dto.setLikes(review.getLikes());
         dto.setContent(review.getContent());
-
-        // Convertir lista de Comment a CommentResponseDto
-        dto.setComments(review.getComments().stream()
-                .map(comment -> {
-                    CommentResponseDto commentDto = new CommentResponseDto();
-                    commentDto.setId(comment.getId());
-                    commentDto.setContent(comment.getContent());
-                    commentDto.setUserId(comment.getUser().getId());
-                    commentDto.setReviewId(comment.getReview().getId());
-                    commentDto.setCreatedAt(comment.getCreatedAt());
-                    return commentDto;
-                })
-                .collect(Collectors.toList()));
-
-        // Datos del dueño de la reseña
-        dto.setOwner(review.getUser().getName());
-        dto.setOwnerId(review.getUser().getId());
+        //dto.setRating(review.getRating());
+        dto.setRestaurantId(review.getRestaurant().getId());
+        dto.setUserId(review.getUser().getId());
+        dto.setUserName(review.getUser().getName());
+        dto.setUserLastname(review.getUser().getLastname());
         dto.setCreatedAt(review.getCreatedAt());
-
-        // Si necesitas los ID de usuarios que dieron like
-        if (review.getLikedBy() != null) {
-            dto.setLikedByUserIds(review.getLikedBy().stream()
-                    .map(User::getId)
-                    .collect(Collectors.toSet()));
-        }
-
         return dto;
     }
 
@@ -198,23 +237,14 @@ public class RestaurantService {
         CommentResponseDto dto = new CommentResponseDto();
         dto.setId(comment.getId());
         dto.setContent(comment.getContent());
+        dto.setReviewId(comment.getReview().getId());
         dto.setUserId(comment.getUser().getId());
+        dto.setUserName(comment.getUser().getName());
+        dto.setUserLastname(comment.getUser().getLastname());
         dto.setCreatedAt(comment.getCreatedAt());
         return dto;
     }
 
-    /*
-    COnfigurar para que calcule bien las valoraciones
-    private Double calculateAverageRating(Restaurant restaurant) {
-        if (restaurant.getValoraciones().isEmpty()) {
-            return 0.0;
-        }
-        return restaurant.getValoraciones().stream()
-                .mapToDouble(review -> review.getLikes())
-                .average()
-                .orElse(0.0);
-    }
-*/
     private LocationDto toLocationDto(Location location) {
         LocationDto dto = new LocationDto();
         dto.setLatitud(location.getLatitud());

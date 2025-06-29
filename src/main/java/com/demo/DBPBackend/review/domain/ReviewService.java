@@ -12,6 +12,9 @@ import com.demo.DBPBackend.user.domain.User;
 import com.demo.DBPBackend.user.infrastructure.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -41,11 +44,10 @@ public class ReviewService {
         return reviewResponseDto;
     }
 
-    public List<ReviewResponseDto> getReviewByRestaurantId(Long restaurantId) {
-        List<Review> reviews = reviewRepository.findByRestaurantId(restaurantId);
-        return reviews.stream()
-                .map(this::getReviewResponseDto)
-                .collect(Collectors.toList());
+    public Page<ReviewResponseDto> getReviewByRestaurantId(Long restaurantId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Review> reviews = reviewRepository.findByRestaurantIdOrderByCreatedAtDesc(restaurantId, pageable);
+        return reviews.map(this::getReviewResponseDto);
     }
 
     public ReviewResponseDto getReviewById(Long id) {
@@ -57,28 +59,31 @@ public class ReviewService {
         return getReviewResponseDto(review);
     }
 
-    public List<ReviewResponseDto> getAllReviews() {
-        List<Review> reviews = reviewRepository.findAllByOrderByCreatedAtDesc();
-        return reviews.stream()
-                .map(this::getReviewResponseDto)
-                .collect(Collectors.toList());
+    public Page<ReviewResponseDto> getAllReviews(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Review> reviews = reviewRepository.findAllByOrderByCreatedAtDesc(pageable);
+        return reviews.map(this::getReviewResponseDto);
     }
 
-    public List<ReviewResponseDto> getReviewsByCurrentUser() {
+    public Page<ReviewResponseDto> getAllReviewsOrderedByLikes(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Review> reviews = reviewRepository.findAllByOrderByLikesDesc(pageable);
+        return reviews.map(this::getReviewResponseDto);
+    }
+
+    public Page<ReviewResponseDto> getReviewsByCurrentUser(int page, int size) {
         String email = authUtils.getCurrentUserEmail();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        List<Review> reviews = reviewRepository.findByUserId(user.getId());
-        return reviews.stream()
-                .map(this::getReviewResponseDto)
-                .collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Review> reviews = reviewRepository.findByUserIdOrderByCreatedAtDesc(user.getId(), pageable);
+        return reviews.map(this::getReviewResponseDto);
     }
 
-    public List<ReviewResponseDto> getReviewsByUserId(Long userId) {
-        List<Review> reviews = reviewRepository.findByUserId(userId);
-        return reviews.stream()
-                .map(this::getReviewResponseDto)
-                .collect(Collectors.toList());
+    public Page<ReviewResponseDto> getReviewsByUserId(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Review> reviews = reviewRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
+        return reviews.map(this::getReviewResponseDto);
     }
 
     @Transactional
