@@ -5,6 +5,7 @@ import com.demo.DBPBackend.comment.domain.Comment;
 import com.demo.DBPBackend.comment.dto.CommentResponseDto;
 import com.demo.DBPBackend.exceptions.ResourceNotFoundException;
 import com.demo.DBPBackend.exceptions.UnauthorizedOperationException;
+import com.demo.DBPBackend.localMediaStorage.domain.localMediaStorageService;
 import com.demo.DBPBackend.location.dto.LocationDto;
 import com.demo.DBPBackend.restaurant.domain.Restaurant;
 import com.demo.DBPBackend.restaurant.dto.RestaurantResponseDto;
@@ -15,9 +16,11 @@ import com.demo.DBPBackend.user.dto.UserPublicUpdateDto;
 import com.demo.DBPBackend.user.dto.UserRequestDto;
 import com.demo.DBPBackend.user.dto.UserResponseDto;
 import com.demo.DBPBackend.user.dto.UserSummaryDto;
+import com.demo.DBPBackend.user.dto.UserUpdateProfileImageDto;
 import com.demo.DBPBackend.user.infrastructure.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.PageImpl;
@@ -36,6 +39,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final AuthUtils authorizationUtils;
     private final PasswordEncoder passwordEncoder;
+    private final localMediaStorageService mediaStorageService;
 
     public UserResponseDto getMe() {
         String email = authorizationUtils.getCurrentUserEmail();
@@ -268,6 +272,23 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
+    @Transactional
+    public UserResponseDto updateProfileImage(Long id, UserUpdateProfileImageDto userUpdateProfileImageDto) throws FileUploadException {
+        if (!authorizationUtils.isAdminOrResourceOwner(id)) {
+            throw new UnauthorizedOperationException("You are not authorized to perform this action");
+        }
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+        String profileImageUrl = mediaStorageService.uploadFile(userUpdateProfileImageDto.getProfileImage());
+        user.setProfileImageUrl(profileImageUrl);
+
+        userRepository.save(user);
+
+        return toUserResponseDto(user);
+    }
+
     private UserResponseDto toUserResponseDto(User user) {
         UserResponseDto dto = new UserResponseDto();
         dto.setId(user.getId());
@@ -277,6 +298,7 @@ public class UserService {
         dto.setPhone(user.getPhone());
         dto.setRole(user.getRole());
         dto.setCreatedAt(user.getCreatedAt());
+        dto.setProfileImageUrl(user.getProfileImageUrl());
         
         // Mapear reviews usando DTOs
         if (user.getReviews() != null) {

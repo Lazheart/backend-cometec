@@ -8,9 +8,12 @@ import com.demo.DBPBackend.user.domain.UserService;
 import com.demo.DBPBackend.user.dto.UserPublicUpdateDto;
 import com.demo.DBPBackend.user.dto.UserRequestDto;
 import com.demo.DBPBackend.user.dto.UserResponseDto;
+import com.demo.DBPBackend.user.dto.UserUpdateProfileImageDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -81,5 +84,14 @@ public class UserController {
     public ResponseEntity<Page<RestaurantResponseDto>> getOwnedRestaurants(@RequestParam(defaultValue = "0") int page,
                                                                            @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(userService.getOwnedRestaurants(page, size));
+    }
+
+    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
+    @PutMapping(value = "/{id}/profile-image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<UserResponseDto> updateProfileImage(
+            @PathVariable Long id,
+            @ModelAttribute UserUpdateProfileImageDto userUpdateProfileImageDto) throws FileUploadException {
+        UserResponseDto updatedUser = userService.updateProfileImage(id, userUpdateProfileImageDto);
+        return ResponseEntity.ok(updatedUser);
     }
 }

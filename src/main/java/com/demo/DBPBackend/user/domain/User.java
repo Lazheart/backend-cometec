@@ -59,6 +59,8 @@ public class User implements UserDetails {
 
     private LocalDateTime createdAt;
 
+    private String profileImageUrl = "https://cometec-storage.s3.amazonaws.com/Default_pfp.svg.png";
+
 
     // 1. Restaurantes de los que es dueño
     @OneToMany(mappedBy = "owner")

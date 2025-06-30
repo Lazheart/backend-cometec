@@ -1,8 +1,11 @@
 package com.demo.DBPBackend.dish.dto;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class DishUpdateRequestDto {
     private String name;
     private String description;
