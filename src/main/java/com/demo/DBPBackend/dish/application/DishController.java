@@ -33,15 +33,14 @@ public class DishController {
 
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<DishResponseDto> createDish(@RequestBody DishRequestDto dishRequestDto) {
+    public ResponseEntity<DishResponseDto> createDish(@ModelAttribute DishRequestDto dishRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(dishService.createDish(dishRequestDto));
     }
 
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @PatchMapping("/{id}")
-    public ResponseEntity<DishResponseDto> updateDish(@PathVariable Long id,
-                                                      @RequestBody DishUpdateRequestDto dishUpdateRequestDto) {
-        return ResponseEntity.ok(dishService.updateDish(id, dishUpdateRequestDto));
+    public ResponseEntity<DishResponseDto> updateDish(@PathVariable Long id, @ModelAttribute DishRequestDto dishRequestDto) {
+        return ResponseEntity.ok(dishService.updateDish(id, dishRequestDto));
     }
 
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")

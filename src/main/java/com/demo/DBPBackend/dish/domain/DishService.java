@@ -12,8 +12,10 @@ import com.demo.DBPBackend.menu.domain.Menu;
 import com.demo.DBPBackend.menu.infrastructure.MenuRepository;
 import com.demo.DBPBackend.restaurant.domain.Restaurant;
 import com.demo.DBPBackend.restaurant.infrastructure.RestaurantRepository;
+import com.demo.DBPBackend.localMediaStorage.domain.MediaStorageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +33,7 @@ public class DishService {
     private final MenuRepository menuRepository;
     private final RestaurantRepository restaurantRepository;
     private final AuthUtils authUtils;
+    private final MediaStorageService mediaStorageService;
 
     public Page<DishSummaryDto> getAllDishes(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -145,6 +148,15 @@ public class DishService {
         dish.setCategory(dto.getCategory() != null ? dto.getCategory() : DishCategory.OTHER);
         dish.setMenu(menu);
 
+        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
+            try {
+                String imageUrl = mediaStorageService.uploadFile(dto.getImage());
+                dish.setImageUrl(imageUrl);
+            } catch (FileUploadException e) {
+                throw new RuntimeException("Error uploading dish image: " + e.getMessage());
+            }
+        }
+
         Dish savedDish = dishRepository.save(dish);
         return toDishResponseDto(savedDish);
     }
@@ -164,6 +176,18 @@ public class DishService {
         
         if (dto.getPrice() != null && dto.getPrice() >= 0) {
             dish.setPrice(dto.getPrice());
+        }
+        
+        if (dto instanceof DishRequestDto) {
+            DishRequestDto req = (DishRequestDto) dto;
+            if (req.getImage() != null && !req.getImage().isEmpty()) {
+                try {
+                    String imageUrl = mediaStorageService.uploadFile(req.getImage());
+                    dish.setImageUrl(imageUrl);
+                } catch (FileUploadException e) {
+                    throw new RuntimeException("Error uploading dish image: " + e.getMessage());
+                }
+            }
         }
         
         Dish savedDish = dishRepository.save(dish);
@@ -253,6 +277,7 @@ public class DishService {
         dto.setPrice(dish.getPrice());
         dto.setCategory(dish.getCategory());
         dto.setMenuId(dish.getMenu().getId());
+        dto.setImageUrl(dish.getImageUrl());
         return dto;
     }
 
@@ -260,7 +285,10 @@ public class DishService {
         DishSummaryDto dto = new DishSummaryDto();
         dto.setId(dish.getId());
         dto.setName(dish.getName());
+        dto.setDescription(dish.getDescription());
         dto.setPrice(dish.getPrice());
+        dto.setCategory(dish.getCategory());
+        dto.setImageUrl(dish.getImageUrl());
         return dto;
     }
 }

@@ -24,6 +24,7 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     Page<Restaurant> findByNameContaining(String name, Pageable pageable);
     Page<Restaurant> findByOwnerId(Long ownerId, Pageable pageable);
     Page<Restaurant> findByCategory(RestaurantCategory category, Pageable pageable);
+    Page<Restaurant> findByFavouritedBy_Id(Long userId, Pageable pageable);
     
     // Métodos con ordenamiento
     Page<Restaurant> findAllByOrderByNameAsc(Pageable pageable);

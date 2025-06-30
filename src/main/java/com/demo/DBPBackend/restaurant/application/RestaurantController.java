@@ -42,7 +42,7 @@ public class RestaurantController {
 
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<RestaurantResponseDto> createRestaurant(@RequestBody RestaurantRequestDto restaurantRequestDto) {
+    public ResponseEntity<RestaurantResponseDto> createRestaurant(@ModelAttribute RestaurantRequestDto restaurantRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(restaurantService.createRestaurant(restaurantRequestDto));
     }
 
@@ -75,5 +75,12 @@ public class RestaurantController {
     @GetMapping("/categories")
     public ResponseEntity<RestaurantCategory[]> getRestaurantCategories() {
         return ResponseEntity.ok(RestaurantCategory.values());
+    }
+
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> updateRestaurant(@PathVariable Long id, @ModelAttribute RestaurantRequestDto restaurantRequestDto) {
+        restaurantService.updateRestaurant(id, restaurantRequestDto);
+        return ResponseEntity.noContent().build();
     }
 }
