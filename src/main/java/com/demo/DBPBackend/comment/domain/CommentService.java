@@ -127,7 +127,15 @@ public class CommentService {
     }
 
     @Transactional
-    public void createComment(CommentRequestDto dto) {
+    public CommentResponseDto createComment(CommentRequestDto dto) {
+        if (dto.getReviewId() == null) {
+            throw new ResourceNotFoundException("Review ID is required");
+        }
+
+        if (dto.getContent() == null || dto.getContent().isEmpty()) {
+            throw new ResourceNotFoundException("Comment content is required");
+        }
+
         Review review = reviewRepository.findById(dto.getReviewId())
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
 
@@ -141,7 +149,8 @@ public class CommentService {
         comment.setUser(user);
         comment.setCreatedAt(LocalDateTime.now());
 
-        commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(comment);
+        return toCommentResponseDto(savedComment);
     }
 
     @Transactional

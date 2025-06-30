@@ -20,14 +20,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,22 +80,22 @@ public class UserService {
     public Page<UserResponseDto> getUsersByName(String name, int page, int size) {
         String normalizedName = normalizeText(name);
         Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = userRepository.findByNameContaining(normalizedName, pageable);
-        return userPage.map(this::toUserResponseDto);
+        Page<User> users = userRepository.findByNameContaining(normalizedName, pageable);
+        return users.map(this::toUserResponseDto);
     }
 
     public Page<UserResponseDto> getUsersByLastname(String lastname, int page, int size) {
         String normalizedLastname = normalizeText(lastname);
         Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = userRepository.findByLastnameContaining(normalizedLastname, pageable);
-        return userPage.map(this::toUserResponseDto);
+        Page<User> users = userRepository.findByLastnameContaining(normalizedLastname, pageable);
+        return users.map(this::toUserResponseDto);
     }
 
     public Page<UserResponseDto> getUsersByEmail(String email, int page, int size) {
         String normalizedEmail = normalizeText(email);
         Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = userRepository.findByEmailContaining(normalizedEmail, pageable);
-        return userPage.map(this::toUserResponseDto);
+        Page<User> users = userRepository.findByEmailContaining(normalizedEmail, pageable);
+        return users.map(this::toUserResponseDto);
     }
 
     public Page<UserResponseDto> getUsersByRole(Role role, int page, int size) {
@@ -146,9 +144,17 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        user.setName(updatedInfo.getName());
-        user.setLastname(updatedInfo.getLastname());
-        user.setPhone(updatedInfo.getPhone());
+        if (updatedInfo.getName() != null && !updatedInfo.getName().isEmpty()) {
+            user.setName(updatedInfo.getName());
+        }
+        
+        if (updatedInfo.getLastname() != null && !updatedInfo.getLastname().isEmpty()) {
+            user.setLastname(updatedInfo.getLastname());
+        }
+        
+        if (updatedInfo.getPhone() != null && !updatedInfo.getPhone().isEmpty()) {
+            user.setPhone(updatedInfo.getPhone());
+        }
 
         userRepository.save(user);
     }
@@ -176,7 +182,7 @@ public class UserService {
 
         // Como no hay método directo en el repositorio, usamos stream con paginación manual
         List<RestaurantResponseDto> allFavourites = user.getFavouriteRestaurants().stream()
-                .map(restaurant -> toRestaurantResponseDto(restaurant))
+                .map(this::toRestaurantResponseDto)
                 .collect(Collectors.toList());
         
         // Paginación manual
@@ -198,7 +204,7 @@ public class UserService {
 
         // Como no hay método directo en el repositorio, usamos stream con paginación manual
         List<RestaurantResponseDto> allOwned = user.getOwnedRestaurants().stream()
-                .map(restaurant -> toRestaurantResponseDto(restaurant))
+                .map(this::toRestaurantResponseDto)
                 .collect(Collectors.toList());
         
         // Paginación manual
@@ -220,7 +226,7 @@ public class UserService {
 
         // Como no hay método directo en el repositorio, usamos stream con paginación manual
         List<CommentResponseDto> allComments = user.getComments().stream()
-                .map(comment -> toCommentResponseDto(comment))
+                .map(this::toCommentResponseDto)
                 .collect(Collectors.toList());
         
         // Paginación manual
@@ -242,7 +248,7 @@ public class UserService {
 
         // Como no hay método directo en el repositorio, usamos stream con paginación manual
         List<ReviewResponseDto> allReviews = user.getReviews().stream()
-                .map(review -> toReviewResponseDto(review))
+                .map(this::toReviewResponseDto)
                 .collect(Collectors.toList());
         
         // Paginación manual
@@ -262,13 +268,6 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    private String normalizeText(String text) {
-        return Normalizer.normalize(text, Normalizer.Form.NFC)
-                .replaceAll("[''']", "'")
-                .replaceAll("\\p{M}", "")
-                .toLowerCase();
-    }
-
     private UserResponseDto toUserResponseDto(User user) {
         UserResponseDto dto = new UserResponseDto();
         dto.setId(user.getId());
@@ -282,7 +281,7 @@ public class UserService {
         // Mapear reviews usando DTOs
         if (user.getReviews() != null) {
             List<ReviewResponseDto> reviewDtos = user.getReviews().stream()
-                .map(review -> toReviewResponseDto(review))
+                .map(this::toReviewResponseDto)
                 .collect(Collectors.toList());
             dto.setReviews(reviewDtos);
         }
@@ -290,7 +289,7 @@ public class UserService {
         // Mapear restaurantes favoritos usando DTOs
         if (user.getFavouriteRestaurants() != null) {
             List<RestaurantSummaryDto> restaurantDtos = user.getFavouriteRestaurants().stream()
-                .map(restaurant -> toRestaurantSummaryDto(restaurant))
+                .map(this::toRestaurantSummaryDto)
                 .collect(Collectors.toList());
             dto.setFavouriteRestaurants(restaurantDtos);
         }
@@ -310,6 +309,7 @@ public class UserService {
         RestaurantResponseDto dto = new RestaurantResponseDto();
         dto.setId(restaurant.getId());
         dto.setName(restaurant.getName());
+        dto.setCategory(restaurant.getCategory());
         dto.setOwnerId(restaurant.getOwner().getId());
         dto.setOwnerName(restaurant.getOwner().getName());
         
@@ -330,6 +330,7 @@ public class UserService {
         CommentResponseDto dto = new CommentResponseDto();
         dto.setId(comment.getId());
         dto.setContent(comment.getContent());
+        dto.setReviewId(comment.getReview().getId());
         dto.setUserId(comment.getUser().getId());
         dto.setUserName(comment.getUser().getName());
         dto.setUserLastname(comment.getUser().getLastname());
@@ -341,7 +342,6 @@ public class UserService {
         ReviewResponseDto dto = new ReviewResponseDto();
         dto.setId(review.getId());
         dto.setContent(review.getContent());
-        //dto.setRating(review.getRating());
         dto.setRestaurantId(review.getRestaurant().getId());
         dto.setUserId(review.getUser().getId());
         dto.setUserName(review.getUser().getName());
@@ -354,6 +354,8 @@ public class UserService {
         RestaurantSummaryDto dto = new RestaurantSummaryDto();
         dto.setId(restaurant.getId());
         dto.setName(restaurant.getName());
+        dto.setCategory(restaurant.getCategory());
+        dto.setOwnerId(restaurant.getOwner().getId());
         dto.setOwnerName(restaurant.getOwner().getName());
         
         // Mapear ubicación
@@ -365,6 +367,11 @@ public class UserService {
         }
         
         dto.setTotalReviews(restaurant.getValoraciones().size());
+        dto.setHasMenu(restaurant.getMenu() != null);
         return dto;
+    }
+
+    private String normalizeText(String text) {
+        return Normalizer.normalize(text, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 }

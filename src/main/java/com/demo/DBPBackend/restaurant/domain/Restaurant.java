@@ -31,6 +31,10 @@ public class Restaurant {
     @NotBlank
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RestaurantCategory category = RestaurantCategory.OTHER;
+
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;

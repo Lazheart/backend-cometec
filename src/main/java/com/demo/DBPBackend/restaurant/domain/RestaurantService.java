@@ -50,7 +50,7 @@ public class RestaurantService {
 
     public Page<RestaurantSummaryDto> getRestaurantsByOwnerId(Long ownerId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Restaurant> restaurants = restaurantRepository.findByOwnerIdOrderByIdDesc(ownerId, pageable);
+        Page<Restaurant> restaurants = restaurantRepository.findByOwnerId(ownerId, pageable);
         return restaurants.map(this::toRestaurantSummary);
     }
 
@@ -63,6 +63,24 @@ public class RestaurantService {
     public Page<RestaurantSummaryDto> getAllRestaurantsOrderedById(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Restaurant> restaurants = restaurantRepository.findAllByOrderByIdDesc(pageable);
+        return restaurants.map(this::toRestaurantSummary);
+    }
+
+    public Page<RestaurantSummaryDto> getRestaurantsByCategory(RestaurantCategory category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Restaurant> restaurants = restaurantRepository.findByCategory(category, pageable);
+        return restaurants.map(this::toRestaurantSummary);
+    }
+
+    public Page<RestaurantSummaryDto> getRestaurantsByCategoryOrderedByName(RestaurantCategory category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Restaurant> restaurants = restaurantRepository.findByCategoryOrderByNameAsc(category, pageable);
+        return restaurants.map(this::toRestaurantSummary);
+    }
+
+    public Page<RestaurantSummaryDto> getRestaurantsByCategoryOrderedById(RestaurantCategory category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Restaurant> restaurants = restaurantRepository.findByCategoryOrderByIdDesc(category, pageable);
         return restaurants.map(this::toRestaurantSummary);
     }
 
@@ -147,13 +165,22 @@ public class RestaurantService {
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        if (dto.getName() == null || dto.getName().isEmpty()) {
+            throw new ResourceNotFoundException("Restaurant name is required");
+        }
+
+        if (dto.getLocationDto() == null) {
+            throw new ResourceNotFoundException("Location is required");
+        }
+
         Restaurant restaurant = new Restaurant();
         restaurant.setName(dto.getName());
+        restaurant.setCategory(dto.getCategory() != null ? dto.getCategory() : RestaurantCategory.OTHER);
         restaurant.setOwner(currentUser);
 
         Location location = new Location();
-        location.setLatitud(dto.getLocationDto().getLatitud());
-        location.setLongitud(dto.getLocationDto().getLongitud());
+        location.setLatitud(dto.getLocationDto().getLatitud() != null ? dto.getLocationDto().getLatitud() : 0.0);
+        location.setLongitud(dto.getLocationDto().getLongitud() != null ? dto.getLocationDto().getLongitud() : 0.0);
         restaurant.setLocation(location);
 
         Restaurant savedRestaurant = restaurantRepository.save(restaurant);
@@ -170,11 +197,23 @@ public class RestaurantService {
             throw new UnauthorizedOperationException("You are not authorized to update this restaurant");
         }
 
-        restaurant.setName(dto.getName());
+        if (dto.getName() != null && !dto.getName().isEmpty()) {
+            restaurant.setName(dto.getName());
+        }
+        
+        if (dto.getCategory() != null) {
+            restaurant.setCategory(dto.getCategory());
+        }
 
-        Location location = restaurant.getLocation();
-        location.setLatitud(dto.getLocationDto().getLatitud());
-        location.setLongitud(dto.getLocationDto().getLongitud());
+        if (dto.getLocationDto() != null) {
+            Location location = restaurant.getLocation();
+            if (dto.getLocationDto().getLatitud() != null) {
+                location.setLatitud(dto.getLocationDto().getLatitud());
+            }
+            if (dto.getLocationDto().getLongitud() != null) {
+                location.setLongitud(dto.getLocationDto().getLongitud());
+            }
+        }
 
         restaurantRepository.save(restaurant);
     }
@@ -202,9 +241,12 @@ public class RestaurantService {
         RestaurantSummaryDto dto = new RestaurantSummaryDto();
         dto.setId(restaurant.getId());
         dto.setName(restaurant.getName());
+        dto.setCategory(restaurant.getCategory());
+        dto.setOwnerId(restaurant.getOwner().getId());
         dto.setOwnerName(restaurant.getOwner().getName());
         dto.setLocationDto(toLocationDto(restaurant.getLocation()));
         dto.setTotalReviews(restaurant.getValoraciones().size());
+        dto.setHasMenu(restaurant.getMenu() != null);
         return dto;
     }
 
@@ -212,6 +254,7 @@ public class RestaurantService {
         RestaurantResponseDto dto = new RestaurantResponseDto();
         dto.setId(restaurant.getId());
         dto.setName(restaurant.getName());
+        dto.setCategory(restaurant.getCategory());
         dto.setOwnerId(restaurant.getOwner().getId());
         dto.setOwnerName(restaurant.getOwner().getName());
         dto.setLocationDto(toLocationDto(restaurant.getLocation()));
@@ -224,7 +267,6 @@ public class RestaurantService {
         ReviewResponseDto dto = new ReviewResponseDto();
         dto.setId(review.getId());
         dto.setContent(review.getContent());
-        //dto.setRating(review.getRating());
         dto.setRestaurantId(review.getRestaurant().getId());
         dto.setUserId(review.getUser().getId());
         dto.setUserName(review.getUser().getName());

@@ -31,6 +31,10 @@ public class Dish {
     @DecimalMin("0.00")
     private Double price;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DishCategory category;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "menu_id")
     private Menu menu;
