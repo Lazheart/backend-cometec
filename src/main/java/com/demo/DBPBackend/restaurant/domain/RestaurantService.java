@@ -270,7 +270,6 @@ public class RestaurantService {
         dto.setRestaurantId(review.getRestaurant().getId());
         dto.setUserId(review.getUser().getId());
         dto.setUserName(review.getUser().getName());
-        dto.setUserLastname(review.getUser().getLastname());
         dto.setCreatedAt(review.getCreatedAt());
         return dto;
     }
@@ -282,7 +281,6 @@ public class RestaurantService {
         dto.setReviewId(comment.getReview().getId());
         dto.setUserId(comment.getUser().getId());
         dto.setUserName(comment.getUser().getName());
-        dto.setUserLastname(comment.getUser().getLastname());
         dto.setCreatedAt(comment.getCreatedAt());
         return dto;
     }

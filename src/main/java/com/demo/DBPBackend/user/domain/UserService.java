@@ -333,7 +333,6 @@ public class UserService {
         dto.setReviewId(comment.getReview().getId());
         dto.setUserId(comment.getUser().getId());
         dto.setUserName(comment.getUser().getName());
-        dto.setUserLastname(comment.getUser().getLastname());
         dto.setCreatedAt(comment.getCreatedAt());
         return dto;
     }
