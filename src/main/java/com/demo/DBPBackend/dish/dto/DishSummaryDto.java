@@ -2,8 +2,11 @@ package com.demo.DBPBackend.dish.dto;
 
 import com.demo.DBPBackend.dish.domain.DishCategory;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class DishSummaryDto {
     private Long id;
     private String name;

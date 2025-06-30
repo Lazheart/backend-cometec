@@ -4,8 +4,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class UserPublicUpdateDto {
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 30, message = "El nombre no puede exceder 30 caracteres")
