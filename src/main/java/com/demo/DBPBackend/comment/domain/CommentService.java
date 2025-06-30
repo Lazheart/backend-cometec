@@ -152,7 +152,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateComment(Long id, String content) {
+    public CommentResponseDto updateComment(Long id, CommentRequestDto dto) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
 
@@ -164,8 +164,9 @@ public class CommentService {
             throw new UnauthorizedOperationException("You are not authorized to update this comment");
         }
 
-        comment.setContent(content);
+        comment.setContent(dto.getContent());
         commentRepository.save(comment);
+        return toCommentResponseDto(comment);
     }
 
     @Transactional
