@@ -6,6 +6,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-class ReviewUpdateContentDto {
+public class ReviewUpdateContentDto {
     private String content;
 }

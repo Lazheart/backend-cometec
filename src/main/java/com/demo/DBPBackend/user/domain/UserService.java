@@ -5,7 +5,7 @@ import com.demo.DBPBackend.comment.domain.Comment;
 import com.demo.DBPBackend.comment.dto.CommentResponseDto;
 import com.demo.DBPBackend.exceptions.ResourceNotFoundException;
 import com.demo.DBPBackend.exceptions.UnauthorizedOperationException;
-import com.demo.DBPBackend.localMediaStorage.domain.localMediaStorageService;
+import com.demo.DBPBackend.localMediaStorage.domain.MediaStorageService;
 import com.demo.DBPBackend.location.dto.LocationDto;
 import com.demo.DBPBackend.restaurant.domain.Restaurant;
 import com.demo.DBPBackend.restaurant.dto.RestaurantResponseDto;
@@ -39,7 +39,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final AuthUtils authorizationUtils;
     private final PasswordEncoder passwordEncoder;
-    private final localMediaStorageService mediaStorageService;
+    private final MediaStorageService mediaStorageService;
 
     public UserResponseDto getMe() {
         String email = authorizationUtils.getCurrentUserEmail();
