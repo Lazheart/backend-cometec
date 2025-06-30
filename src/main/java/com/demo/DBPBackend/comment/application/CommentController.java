@@ -28,17 +28,16 @@ public class CommentController {
         return ResponseEntity.ok(commentService.getCommentById(id));
     }
 
-    @GetMapping("/review/{reviewId}")
-    public ResponseEntity<Page<CommentResponseDto>> getCommentsByReview(@PathVariable Long reviewId,
-                                                                        @RequestParam(defaultValue = "0") int page,
-                                                                        @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(commentService.getCommentsByReviewId(reviewId, page, size));
-    }
-
     @PreAuthorize("hasRole('USER')")
     @PostMapping
     public ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(commentService.createComment(commentRequestDto));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PatchMapping("/{id}")
+    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto) {
+        return ResponseEntity.ok(commentService.updateComment(id, commentRequestDto));
     }
 
     @PreAuthorize("hasRole('USER')")

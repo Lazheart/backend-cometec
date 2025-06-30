@@ -17,24 +17,13 @@ public class DishController {
 
     private final DishService dishService;
 
-    @GetMapping
-    public ResponseEntity<Page<DishSummaryDto>> getAllDishes(@RequestParam(defaultValue = "0") int page,
-                                                             @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(dishService.getAllDishes(page, size));
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<DishResponseDto> getDishById(@PathVariable Long id) {
-        return ResponseEntity.ok(dishService.getDishById(id));
-    }
-
     @GetMapping("/category/{category}")
     public ResponseEntity<Page<DishSummaryDto>> getDishesByCategory(@PathVariable DishCategory category,
                                                                     @RequestParam(defaultValue = "0") int page,
                                                                     @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(dishService.getDishesByCategory(category, page, size));
     }
-
+//verificar que no se repita
     @GetMapping("/menus/{menuId}/dishes")
     public ResponseEntity<Page<DishResponseDto>> getDishesByMenu(@PathVariable Long menuId,
                                                                  @RequestParam(defaultValue = "0") int page,
@@ -62,7 +51,7 @@ public class DishController {
         return ResponseEntity.noContent().build();
     }
 
-    //Ensena las 4-5 categorias de dishZes
+    //Muestra las 4-5 categorias de dishZes
     @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/categories")
     public ResponseEntity<DishCategory[]> getDishCategories() {

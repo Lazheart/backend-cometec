@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -129,7 +127,7 @@ public class CommentService {
     @Transactional
     public CommentResponseDto createComment(CommentRequestDto dto) {
         if (dto.getReviewId() == null) {
-            throw new ResourceNotFoundException("Review ID is required");
+            throw new ResourceNotFoundException("Review is required");
         }
 
         if (dto.getContent() == null || dto.getContent().isEmpty()) {
@@ -201,7 +199,6 @@ public class CommentService {
         dto.setReviewId(comment.getReview().getId());
         dto.setUserId(comment.getUser().getId());
         dto.setUserName(comment.getUser().getName());
-        dto.setUserLastname(comment.getUser().getLastname());
         dto.setCreatedAt(comment.getCreatedAt());
         return dto;
     }

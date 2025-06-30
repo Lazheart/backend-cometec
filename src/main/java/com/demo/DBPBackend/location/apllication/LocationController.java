@@ -18,7 +18,7 @@ public class LocationController {
 
 
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-     @GetMapping("/restaurants/{restaurantId}")
+    @GetMapping("/restaurants/{restaurantId}")
     public ResponseEntity<LocationDto> getLocationByRestaurant( @PathVariable Long restaurantId) {
         LocationDto location = locationService.getLocationByRestaurant(restaurantId);
         return ResponseEntity.ok(location);
