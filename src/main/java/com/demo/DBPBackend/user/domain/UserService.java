@@ -10,20 +10,22 @@ import com.demo.DBPBackend.location.dto.LocationDto;
 import com.demo.DBPBackend.restaurant.domain.Restaurant;
 import com.demo.DBPBackend.restaurant.dto.RestaurantResponseDto;
 import com.demo.DBPBackend.restaurant.dto.RestaurantSummaryDto;
+import com.demo.DBPBackend.restaurant.infrastructure.RestaurantRepository;
 import com.demo.DBPBackend.review.domain.Review;
 import com.demo.DBPBackend.review.dto.ReviewResponseDto;
+import com.demo.DBPBackend.review.infrastructure.ReviewRepository;
 import com.demo.DBPBackend.user.dto.UserPublicUpdateDto;
 import com.demo.DBPBackend.user.dto.UserRequestDto;
 import com.demo.DBPBackend.user.dto.UserResponseDto;
 import com.demo.DBPBackend.user.dto.UserSummaryDto;
 import com.demo.DBPBackend.user.dto.UserUpdateProfileImageDto;
 import com.demo.DBPBackend.user.infrastructure.UserRepository;
+import com.demo.DBPBackend.comment.infrastructure.CommentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,9 @@ public class UserService {
     private final AuthUtils authorizationUtils;
     private final PasswordEncoder passwordEncoder;
     private final MediaStorageService mediaStorageService;
+    private final RestaurantRepository restaurantRepository;
+    private final ReviewRepository reviewRepository;
+    private final CommentRepository commentRepository;
 
     public UserResponseDto getMe() {
         String email = authorizationUtils.getCurrentUserEmail();
@@ -60,63 +65,6 @@ public class UserService {
     public Page<UserResponseDto> getAllUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage = userRepository.findAll(pageable);
-        return userPage.map(this::toUserResponseDto);
-    }
-
-    public Page<UserResponseDto> getAllUsersOrderedByName(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = userRepository.findAllByOrderByNameAsc(pageable);
-        return userPage.map(this::toUserResponseDto);
-    }
-
-    public Page<UserResponseDto> getAllUsersOrderedByCreatedAt(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = userRepository.findAllByOrderByCreatedAtDesc(pageable);
-        return userPage.map(this::toUserResponseDto);
-    }
-
-    public Page<UserResponseDto> getAllUsersOrderedByEmail(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = userRepository.findAllByOrderByEmailAsc(pageable);
-        return userPage.map(this::toUserResponseDto);
-    }
-
-    public Page<UserResponseDto> getUsersByName(String name, int page, int size) {
-        String normalizedName = normalizeText(name);
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> users = userRepository.findByNameContaining(normalizedName, pageable);
-        return users.map(this::toUserResponseDto);
-    }
-
-    public Page<UserResponseDto> getUsersByLastname(String lastname, int page, int size) {
-        String normalizedLastname = normalizeText(lastname);
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> users = userRepository.findByLastnameContaining(normalizedLastname, pageable);
-        return users.map(this::toUserResponseDto);
-    }
-
-    public Page<UserResponseDto> getUsersByEmail(String email, int page, int size) {
-        String normalizedEmail = normalizeText(email);
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> users = userRepository.findByEmailContaining(normalizedEmail, pageable);
-        return users.map(this::toUserResponseDto);
-    }
-
-    public Page<UserResponseDto> getUsersByRole(Role role, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = userRepository.findByRole(role, pageable);
-        return userPage.map(this::toUserResponseDto);
-    }
-
-    public Page<UserResponseDto> getUsersByRoleOrderedByCreatedAt(Role role, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = userRepository.findByRoleOrderByCreatedAtDesc(role, pageable);
-        return userPage.map(this::toUserResponseDto);
-    }
-
-    public Page<UserResponseDto> getUsersByRoleOrderedByName(Role role, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = userRepository.findByRoleOrderByNameAsc(role, pageable);
         return userPage.map(this::toUserResponseDto);
     }
 
@@ -184,21 +132,10 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Como no hay método directo en el repositorio, usamos stream con paginación manual
-        List<RestaurantResponseDto> allFavourites = user.getFavouriteRestaurants().stream()
-                .map(this::toRestaurantResponseDto)
-                .collect(Collectors.toList());
-        
-        // Paginación manual
-        int start = page * size;
-        int end = Math.min(start + size, allFavourites.size());
-        
-        if (start >= allFavourites.size()) {
-            return Page.empty(PageRequest.of(page, size));
-        }
-        
-        List<RestaurantResponseDto> pageContent = allFavourites.subList(start, end);
-        return new PageImpl<>(pageContent, PageRequest.of(page, size), allFavourites.size());
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Restaurant> favouriteRestaurantsPage = restaurantRepository.findByFavouritedBy_Id(user.getId(), pageable);
+
+        return favouriteRestaurantsPage.map(this::toRestaurantResponseDto);
     }
 
     public Page<RestaurantResponseDto> getOwnedRestaurants(int page, int size) {
@@ -206,21 +143,10 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Como no hay método directo en el repositorio, usamos stream con paginación manual
-        List<RestaurantResponseDto> allOwned = user.getOwnedRestaurants().stream()
-                .map(this::toRestaurantResponseDto)
-                .collect(Collectors.toList());
-        
-        // Paginación manual
-        int start = page * size;
-        int end = Math.min(start + size, allOwned.size());
-        
-        if (start >= allOwned.size()) {
-            return Page.empty(PageRequest.of(page, size));
-        }
-        
-        List<RestaurantResponseDto> pageContent = allOwned.subList(start, end);
-        return new PageImpl<>(pageContent, PageRequest.of(page, size), allOwned.size());
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Restaurant> ownedRestaurantsPage = restaurantRepository.findByOwnerId(user.getId(), pageable);
+
+        return ownedRestaurantsPage.map(this::toRestaurantResponseDto);
     }
 
     public Page<CommentResponseDto> getUserComments(int page, int size) {
@@ -228,21 +154,10 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Como no hay método directo en el repositorio, usamos stream con paginación manual
-        List<CommentResponseDto> allComments = user.getComments().stream()
-                .map(this::toCommentResponseDto)
-                .collect(Collectors.toList());
-        
-        // Paginación manual
-        int start = page * size;
-        int end = Math.min(start + size, allComments.size());
-        
-        if (start >= allComments.size()) {
-            return Page.empty(PageRequest.of(page, size));
-        }
-        
-        List<CommentResponseDto> pageContent = allComments.subList(start, end);
-        return new PageImpl<>(pageContent, PageRequest.of(page, size), allComments.size());
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Comment> commentsPage = commentRepository.findByUserId(user.getId(), pageable);
+
+        return commentsPage.map(this::toCommentResponseDto);
     }
 
     public Page<ReviewResponseDto> getUserReviews(int page, int size) {
@@ -250,21 +165,10 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Como no hay método directo en el repositorio, usamos stream con paginación manual
-        List<ReviewResponseDto> allReviews = user.getReviews().stream()
-                .map(this::toReviewResponseDto)
-                .collect(Collectors.toList());
-        
-        // Paginación manual
-        int start = page * size;
-        int end = Math.min(start + size, allReviews.size());
-        
-        if (start >= allReviews.size()) {
-            return Page.empty(PageRequest.of(page, size));
-        }
-        
-        List<ReviewResponseDto> pageContent = allReviews.subList(start, end);
-        return new PageImpl<>(pageContent, PageRequest.of(page, size), allReviews.size());
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Review> reviewsPage = reviewRepository.findByUserId(user.getId(), pageable);
+
+        return reviewsPage.map(this::toReviewResponseDto);
     }
 
     public User findByEmail(String email) {
@@ -395,4 +299,66 @@ public class UserService {
     private String normalizeText(String text) {
         return Normalizer.normalize(text, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
+
+    //Metodos de busqueda adicionales:
+
+
+    public Page<UserResponseDto> getAllUsersOrderedByName(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userRepository.findAllByOrderByNameAsc(pageable);
+        return userPage.map(this::toUserResponseDto);
+    }
+
+    public Page<UserResponseDto> getAllUsersOrderedByCreatedAt(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userRepository.findAllByOrderByCreatedAtDesc(pageable);
+        return userPage.map(this::toUserResponseDto);
+    }
+
+    public Page<UserResponseDto> getAllUsersOrderedByEmail(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userRepository.findAllByOrderByEmailAsc(pageable);
+        return userPage.map(this::toUserResponseDto);
+    }
+
+    public Page<UserResponseDto> getUsersByName(String name, int page, int size) {
+        String normalizedName = normalizeText(name);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> users = userRepository.findByNameContaining(normalizedName, pageable);
+        return users.map(this::toUserResponseDto);
+    }
+
+    public Page<UserResponseDto> getUsersByLastname(String lastname, int page, int size) {
+        String normalizedLastname = normalizeText(lastname);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> users = userRepository.findByLastnameContaining(normalizedLastname, pageable);
+        return users.map(this::toUserResponseDto);
+    }
+
+    public Page<UserResponseDto> getUsersByEmail(String email, int page, int size) {
+        String normalizedEmail = normalizeText(email);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> users = userRepository.findByEmailContaining(normalizedEmail, pageable);
+        return users.map(this::toUserResponseDto);
+    }
+
+    public Page<UserResponseDto> getUsersByRole(Role role, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userRepository.findByRole(role, pageable);
+        return userPage.map(this::toUserResponseDto);
+    }
+
+    public Page<UserResponseDto> getUsersByRoleOrderedByCreatedAt(Role role, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userRepository.findByRoleOrderByCreatedAtDesc(role, pageable);
+        return userPage.map(this::toUserResponseDto);
+    }
+
+    public Page<UserResponseDto> getUsersByRoleOrderedByName(Role role, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userRepository.findByRoleOrderByNameAsc(role, pageable);
+        return userPage.map(this::toUserResponseDto);
+    }
+
+
 }

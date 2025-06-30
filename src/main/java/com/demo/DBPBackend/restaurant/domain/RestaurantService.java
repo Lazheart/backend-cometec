@@ -15,8 +15,10 @@ import com.demo.DBPBackend.location.domain.Location;
 import com.demo.DBPBackend.location.dto.LocationDto;
 import com.demo.DBPBackend.user.domain.User;
 import com.demo.DBPBackend.user.infrastructure.UserRepository;
+import com.demo.DBPBackend.localMediaStorage.domain.MediaStorageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,7 @@ public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
     private final AuthUtils authUtils;
+    private final MediaStorageService mediaStorageService;
 
     public Page<RestaurantSummaryDto> getAllRestaurants(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -183,6 +186,15 @@ public class RestaurantService {
         location.setLongitud(dto.getLocationDto().getLongitud() != null ? dto.getLocationDto().getLongitud() : 0.0);
         restaurant.setLocation(location);
 
+        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
+            try {
+                String imageUrl = mediaStorageService.uploadFile(dto.getImage());
+                restaurant.setImageUrl(imageUrl);
+            } catch (FileUploadException e) {
+                throw new RuntimeException("Error uploading restaurant image: " + e.getMessage());
+            }
+        }
+
         Restaurant savedRestaurant = restaurantRepository.save(restaurant);
 
         return toRestaurantResponse(savedRestaurant);
@@ -212,6 +224,15 @@ public class RestaurantService {
             }
             if (dto.getLocationDto().getLongitud() != null) {
                 location.setLongitud(dto.getLocationDto().getLongitud());
+            }
+        }
+
+        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
+            try {
+                String imageUrl = mediaStorageService.uploadFile(dto.getImage());
+                restaurant.setImageUrl(imageUrl);
+            } catch (FileUploadException e) {
+                throw new RuntimeException("Error uploading restaurant image: " + e.getMessage());
             }
         }
 
@@ -247,6 +268,7 @@ public class RestaurantService {
         dto.setLocationDto(toLocationDto(restaurant.getLocation()));
         dto.setTotalReviews(restaurant.getValoraciones().size());
         dto.setHasMenu(restaurant.getMenu() != null);
+        dto.setImageUrl(restaurant.getImageUrl());
         return dto;
     }
 
@@ -260,6 +282,7 @@ public class RestaurantService {
         dto.setLocationDto(toLocationDto(restaurant.getLocation()));
         dto.setTotalReviews(restaurant.getValoraciones().size());
         dto.setHasMenu(restaurant.getMenu() != null);
+        dto.setImageUrl(restaurant.getImageUrl());
         return dto;
     }
 

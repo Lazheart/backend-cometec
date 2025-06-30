@@ -13,4 +13,5 @@ public class DishSummaryDto {
     private String description;
     private Double price;
     private DishCategory category;
+    private String imageUrl;
 }

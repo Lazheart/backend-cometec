@@ -14,4 +14,5 @@ public class DishResponseDto {
     private Double price;
     private DishCategory category;
     private Long menuId;
+    private String imageUrl;
 }

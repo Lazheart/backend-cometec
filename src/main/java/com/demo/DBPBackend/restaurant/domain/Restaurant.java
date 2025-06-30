@@ -53,4 +53,6 @@ public class Restaurant {
     @ManyToMany(mappedBy = "favouriteRestaurants")
     private List<User> favouritedBy = new ArrayList<>();
 
+    private String imageUrl;
+
 }

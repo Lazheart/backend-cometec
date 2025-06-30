@@ -17,4 +17,5 @@ public class RestaurantSummaryDto {
     private LocationDto locationDto;
     private Integer totalReviews;
     private Boolean hasMenu;
+    private String imageUrl;
 }

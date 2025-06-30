@@ -38,4 +38,6 @@ public class Dish {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "menu_id")
     private Menu menu;
+
+    private String imageUrl;
 }
