@@ -33,6 +33,7 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.getRestaurantById(id));
     }
 
+    @PreAuthorize("hasAnyRole('OWNER', 'USER')")
     @GetMapping("/category/{category}")
     public ResponseEntity<Page<RestaurantSummaryDto>> getRestaurantsByCategory(@PathVariable RestaurantCategory category,
                                                                                @RequestParam(defaultValue = "0") int page,
