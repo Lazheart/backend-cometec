@@ -29,6 +29,8 @@ import java.text.Normalizer;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.demo.DBPBackend.user.domain.Role;
+
 @Service
 @RequiredArgsConstructor
 public class RestaurantService {
@@ -167,6 +169,12 @@ public class RestaurantService {
         String email = authUtils.getCurrentUserEmail();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // Cambiar el rol a OWNER si es USER
+        if (currentUser.getRole() == Role.USER) {
+            currentUser.setRole(Role.OWNER);
+            userRepository.save(currentUser);
+        }
 
         if (dto.getName() == null || dto.getName().isEmpty()) {
             throw new ResourceNotFoundException("Restaurant name is required");

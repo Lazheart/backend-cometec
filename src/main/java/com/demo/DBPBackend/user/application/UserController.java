@@ -87,6 +87,13 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
+    @GetMapping("/favourites")
+    public ResponseEntity<Page<RestaurantResponseDto>> getFavouriteRestaurants(@RequestParam(defaultValue = "0") int page,
+                                                                              @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(userService.getFavouriteRestaurants(page, size));
+    }
+
+    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
     @PutMapping(value = "/{id}/profile-image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UserResponseDto> updateProfileImage(
             @PathVariable Long id,
