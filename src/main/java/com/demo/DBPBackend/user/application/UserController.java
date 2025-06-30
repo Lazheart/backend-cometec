@@ -8,7 +8,6 @@ import com.demo.DBPBackend.user.domain.UserService;
 import com.demo.DBPBackend.user.dto.UserPublicUpdateDto;
 import com.demo.DBPBackend.user.dto.UserRequestDto;
 import com.demo.DBPBackend.user.dto.UserResponseDto;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
@@ -31,78 +30,9 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/all/name")
-    public ResponseEntity<Page<UserResponseDto>> getAllUsersOrderedByName(@RequestParam(defaultValue = "0") int page,
-                                                                          @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getAllUsersOrderedByName(page, size));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/all/created-at")
-    public ResponseEntity<Page<UserResponseDto>> getAllUsersOrderedByCreatedAt(@RequestParam(defaultValue = "0") int page,
-                                                                               @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getAllUsersOrderedByCreatedAt(page, size));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/all/email")
-    public ResponseEntity<Page<UserResponseDto>> getAllUsersOrderedByEmail(@RequestParam(defaultValue = "0") int page,
-                                                                           @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getAllUsersOrderedByEmail(page, size));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/name")
-    public ResponseEntity<Page<UserResponseDto>> getUsersByName(@RequestParam String name,
-                                                                @RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getUsersByName(name, page, size));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/lastname")
-    public ResponseEntity<Page<UserResponseDto>> getUsersByLastname(@RequestParam String lastname,
-                                                                    @RequestParam(defaultValue = "0") int page,
-                                                                    @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getUsersByLastname(lastname, page, size));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/email")
-    public ResponseEntity<Page<UserResponseDto>> getUsersByEmail(@RequestParam String email,
-                                                                 @RequestParam(defaultValue = "0") int page,
-                                                                 @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getUsersByEmail(email, page, size));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/role")
-    public ResponseEntity<Page<UserResponseDto>> getUsersByRole(@RequestParam Role role,
-                                                                @RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getUsersByRole(role, page, size));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/role/created-at")
-    public ResponseEntity<Page<UserResponseDto>> getUsersByRoleOrderedByCreatedAt(@RequestParam Role role,
-                                                                                  @RequestParam(defaultValue = "0") int page,
-                                                                                  @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getUsersByRoleOrderedByCreatedAt(role, page, size));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/role/name")
-    public ResponseEntity<Page<UserResponseDto>> getUsersByRoleOrderedByName(@RequestParam Role role,
-                                                                             @RequestParam(defaultValue = "0") int page,
-                                                                             @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getUsersByRoleOrderedByName(role, page, size));
     }
 
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
@@ -112,31 +42,17 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @PutMapping("/me")
-    public ResponseEntity<Void> updateMe(@RequestBody UserRequestDto updatedUser) {
+    @PatchMapping("/security/me")
+    public ResponseEntity<Void> updateCredentials(@ModelAttribute UserRequestDto updatedUser) {
         userService.updateUser(updatedUser);
         return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @PatchMapping("/me")
+    @PatchMapping("/update/me")
     public ResponseEntity<Void> updatePublicInfo(@RequestBody UserPublicUpdateDto updatedInfo) {
         userService.updatePublicUserInfo(updatedInfo);
         return ResponseEntity.noContent().build();
-    }
-
-    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @GetMapping("/me/favourites")
-    public ResponseEntity<Page<RestaurantResponseDto>> getFavouriteRestaurants(@RequestParam(defaultValue = "0") int page,
-                                                                               @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getFavouriteRestaurants(page, size));
-    }
-
-    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
-    @GetMapping("/me/owned")
-    public ResponseEntity<Page<RestaurantResponseDto>> getOwnedRestaurants(@RequestParam(defaultValue = "0") int page,
-                                                                           @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getOwnedRestaurants(page, size));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -147,16 +63,23 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('USER')")
+    @GetMapping("/reviews")
+    public ResponseEntity<Page<ReviewResponseDto>> getUserReviews(@RequestParam(defaultValue = "0") int page,
+                                                                  @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(userService.getUserReviews(page, size));
+    }
+
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/comments")
     public ResponseEntity<Page<CommentResponseDto>> getUserComments(@RequestParam(defaultValue = "0") int page,
                                                                     @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(userService.getUserComments(page, size));
     }
 
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/reviews")
-    public ResponseEntity<Page<ReviewResponseDto>> getUserReviews(@RequestParam(defaultValue = "0") int page,
-                                                                  @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getUserReviews(page, size));
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    @GetMapping("/owned-restaurants")
+    public ResponseEntity<Page<RestaurantResponseDto>> getOwnedRestaurants(@RequestParam(defaultValue = "0") int page,
+                                                                           @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(userService.getOwnedRestaurants(page, size));
     }
 }

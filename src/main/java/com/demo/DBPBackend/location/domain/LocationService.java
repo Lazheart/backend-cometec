@@ -11,7 +11,7 @@ import com.demo.DBPBackend.restaurant.infrastructure.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -78,12 +78,5 @@ public class LocationService {
         Location location = locationRepository.findById(locationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ubicación no encontrada con ID: " + locationId));
         locationRepository.delete(location);
-    }
-
-    public LocationDto getLocationById(Long locationId) {
-        Location location = locationRepository.findById(locationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Ubicación no encontrada con ID: " + locationId));
-
-        return modelMapper.map(location, LocationDto.class);
     }
 }

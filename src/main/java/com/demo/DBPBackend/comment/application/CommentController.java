@@ -11,110 +11,36 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/comments")
 @RequiredArgsConstructor
+@RequestMapping("/comments")
 public class CommentController {
 
     private final CommentService commentService;
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<Page<CommentResponseDto>> getAllComments(@RequestParam(defaultValue = "0") int page,
                                                                    @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(commentService.getAllComments(page, size));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/all/created-desc")
-    public ResponseEntity<Page<CommentResponseDto>> getAllCommentsOrderedByCreatedAtDesc(@RequestParam(defaultValue = "0") int page,
-                                                                                          @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(commentService.getAllCommentsOrderedByCreatedAtDesc(page, size));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/all/created-asc")
-    public ResponseEntity<Page<CommentResponseDto>> getAllCommentsOrderedByCreatedAtAsc(@RequestParam(defaultValue = "0") int page,
-                                                                                         @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(commentService.getAllCommentsOrderedByCreatedAtAsc(page, size));
-    }
-
-    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<CommentResponseDto> getCommentById(@PathVariable Long id) {
         return ResponseEntity.ok(commentService.getCommentById(id));
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @GetMapping("/review/{reviewId}")
-    public ResponseEntity<Page<CommentResponseDto>> getCommentsByReview(@PathVariable Long reviewId,
-                                                                        @RequestParam(defaultValue = "0") int page,
-                                                                        @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(commentService.getCommentsByReviewId(reviewId, page, size));
-    }
-
-    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @GetMapping("/review/{reviewId}/created-desc")
-    public ResponseEntity<Page<CommentResponseDto>> getCommentsByReviewOrderedByCreatedAtDesc(@PathVariable Long reviewId,
-                                                                                               @RequestParam(defaultValue = "0") int page,
-                                                                                               @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(commentService.getCommentsByReviewIdOrderedByCreatedAtDesc(reviewId, page, size));
-    }
-
-    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @GetMapping("/review/{reviewId}/created-asc")
-    public ResponseEntity<Page<CommentResponseDto>> getCommentsByReviewOrderedByCreatedAtAsc(@PathVariable Long reviewId,
-                                                                                              @RequestParam(defaultValue = "0") int page,
-                                                                                              @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(commentService.getCommentsByReviewIdOrderedByCreatedAtAsc(reviewId, page, size));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<Page<CommentResponseDto>> getCommentsByUser(@PathVariable Long userId,
-                                                                      @RequestParam(defaultValue = "0") int page,
-                                                                      @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(commentService.getCommentsByUserId(userId, page, size));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/user/{userId}/created-desc")
-    public ResponseEntity<Page<CommentResponseDto>> getCommentsByUserOrderedByCreatedAtDesc(@PathVariable Long userId,
-                                                                                             @RequestParam(defaultValue = "0") int page,
-                                                                                             @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(commentService.getCommentsByUserIdOrderedByCreatedAtDesc(userId, page, size));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/user/{userId}/created-asc")
-    public ResponseEntity<Page<CommentResponseDto>> getCommentsByUserOrderedByCreatedAtAsc(@PathVariable Long userId,
-                                                                                            @RequestParam(defaultValue = "0") int page,
-                                                                                            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(commentService.getCommentsByUserIdOrderedByCreatedAtAsc(userId, page, size));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/content")
-    public ResponseEntity<Page<CommentResponseDto>> getCommentsByContent(@RequestParam String content,
-                                                                         @RequestParam(defaultValue = "0") int page,
-                                                                         @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(commentService.getCommentsByContent(content, page, size));
-    }
-
-    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @PostMapping
-    public ResponseEntity<Void> createComment(@RequestBody CommentRequestDto dto) {
-        commentService.createComment(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.createComment(commentRequestDto));
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> updateComment(@PathVariable Long id, @RequestBody String content) {
-        commentService.updateComment(id, content);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto) {
+        return ResponseEntity.ok(commentService.updateComment(id, commentRequestDto));
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
         commentService.deleteComment(id);

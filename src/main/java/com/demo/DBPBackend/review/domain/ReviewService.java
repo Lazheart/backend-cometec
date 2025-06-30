@@ -7,6 +7,7 @@ import com.demo.DBPBackend.restaurant.domain.Restaurant;
 import com.demo.DBPBackend.restaurant.infrastructure.RestaurantRepository;
 import com.demo.DBPBackend.review.dto.ReviewRequestDto;
 import com.demo.DBPBackend.review.dto.ReviewResponseDto;
+import com.demo.DBPBackend.review.dto.ReviewUpdateContentDto;
 import com.demo.DBPBackend.review.infrastructure.ReviewRepository;
 import com.demo.DBPBackend.user.domain.User;
 import com.demo.DBPBackend.user.infrastructure.UserRepository;
@@ -29,20 +30,6 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
     private final AuthUtils authUtils;
-
-    private ReviewResponseDto getReviewResponseDto(Review review) {
-        ReviewResponseDto reviewResponseDto = new ReviewResponseDto();
-        reviewResponseDto.setId(review.getId());
-        reviewResponseDto.setOwner(review.getUser().getName());
-        reviewResponseDto.setOwnerId(review.getUser().getId());
-        reviewResponseDto.setContent(review.getContent());
-        reviewResponseDto.setLikes(review.getLikes());
-        reviewResponseDto.setCreatedAt(review.getCreatedAt());
-        reviewResponseDto.setLikedByUserIds(review.getLikedBy().stream()
-                .map(User::getId)
-                .collect(Collectors.toSet()));
-        return reviewResponseDto;
-    }
 
     public Page<ReviewResponseDto> getReviewByRestaurantId(Long restaurantId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -87,7 +74,19 @@ public class ReviewService {
     }
 
     @Transactional
-    public void createReview(ReviewRequestDto reviewRequestDto) {
+    public ReviewResponseDto createReview(ReviewRequestDto reviewRequestDto) {
+        if (reviewRequestDto.getUserId() == null) {
+            throw new ResourceNotFoundException("User ID is required");
+        }
+
+        if (reviewRequestDto.getRestaurantId() == null) {
+            throw new ResourceNotFoundException("Restaurant ID is required");
+        }
+
+        if (reviewRequestDto.getContent() == null || reviewRequestDto.getContent().isEmpty()) {
+            throw new ResourceNotFoundException("Review content is required");
+        }
+
         User user = userRepository.findById(reviewRequestDto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -101,11 +100,16 @@ public class ReviewService {
         review.setCreatedAt(LocalDateTime.now());
         review.setLikes(0);
 
-        reviewRepository.save(review);
+        Review savedReview = reviewRepository.save(review);
+        return getReviewResponseDto(savedReview);
     }
 
     @Transactional
-    public void changeContent(Long id, String content) {
+    public ReviewResponseDto updateReview(Long id, ReviewUpdateContentDto reviewUpdateContentDto) {
+        if (reviewUpdateContentDto.getContent() == null || reviewUpdateContentDto.getContent().isEmpty()) {
+            throw new ResourceNotFoundException("Review content is required");
+        }
+
         String email = authUtils.getCurrentUserEmail();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -117,8 +121,9 @@ public class ReviewService {
             throw new UnauthorizedOperationException("Only the owner can change the content of this review");
         }
 
-        review.setContent(content);
-        reviewRepository.save(review);
+        review.setContent(reviewUpdateContentDto.getContent());
+        Review savedReview = reviewRepository.save(review);
+        return getReviewResponseDto(savedReview);
     }
 
     @Transactional
@@ -169,5 +174,19 @@ public class ReviewService {
         }
 
         reviewRepository.delete(review);
+    }
+
+    private ReviewResponseDto getReviewResponseDto(Review review) {
+        ReviewResponseDto reviewResponseDto = new ReviewResponseDto();
+        reviewResponseDto.setId(review.getId());
+        reviewResponseDto.setOwner(review.getUser().getName());
+        reviewResponseDto.setOwnerId(review.getUser().getId());
+        reviewResponseDto.setContent(review.getContent());
+        reviewResponseDto.setLikes(review.getLikes());
+        reviewResponseDto.setCreatedAt(review.getCreatedAt());
+        reviewResponseDto.setLikedByUserIds(review.getLikedBy().stream()
+                .map(User::getId)
+                .collect(Collectors.toSet()));
+        return reviewResponseDto;
     }
 }

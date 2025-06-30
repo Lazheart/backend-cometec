@@ -1,5 +1,6 @@
 package com.demo.DBPBackend.dish.dto;
 
+import com.demo.DBPBackend.dish.domain.DishCategory;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,5 +12,6 @@ public class DishResponseDto {
     private String name;
     private String description;
     private Double price;
+    private DishCategory category;
     private Long menuId;
 }
