@@ -59,10 +59,16 @@ public class MenuService {
             throw new UnauthorizedOperationException("You are not authorized to create a menu for this restaurant");
         }
 
+        // Crear y guardar el menú
         Menu menu = new Menu();
         menu.setRestaurant(restaurant);
         menu = menuRepository.save(menu);
 
+        // 🔥 IMPORTANTE: vincular el menú al restaurante
+        restaurant.setMenu(menu);
+        restaurantRepository.save(restaurant);
+
+        // Guardar los platos si vienen en el DTO
         if (dto.getDishes() != null && !dto.getDishes().isEmpty()) {
             Menu finalMenu = menu;
             List<Dish> dishes = dto.getDishes().stream()

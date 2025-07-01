@@ -51,7 +51,7 @@ public class DishController {
     }
 
     //Muestra las 4-5 categorias de dishZes
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OWNER', 'USER')")
     @GetMapping("/categories")
     public ResponseEntity<DishCategory[]> getDishCategories() {
         return ResponseEntity.ok(DishCategory.values());

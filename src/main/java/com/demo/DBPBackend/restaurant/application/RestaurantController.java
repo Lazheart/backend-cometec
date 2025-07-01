@@ -31,7 +31,7 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.getAllRestaurants(page, size));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OWNER', 'USER')")
     @GetMapping("/{id}")
     public ResponseEntity<RestaurantResponseDto> getRestaurantById(@PathVariable Long id) {
         return ResponseEntity.ok(restaurantService.getRestaurantById(id));
