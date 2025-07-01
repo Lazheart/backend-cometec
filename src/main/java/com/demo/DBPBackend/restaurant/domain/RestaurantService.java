@@ -181,7 +181,7 @@ public class RestaurantService {
             throw new ResourceNotFoundException("Restaurant name is required");
         }
 
-        if (dto.getLocationDto() == null) {
+        if (dto.getLocationCreateDto() == null) {
             throw new ResourceNotFoundException("Location is required");
         }
 
@@ -191,8 +191,8 @@ public class RestaurantService {
         restaurant.setOwner(currentUser);
 
         Location location = new Location();
-        location.setLatitud(dto.getLocationDto().getLatitud() != null ? dto.getLocationDto().getLatitud() : 0.0);
-        location.setLongitud(dto.getLocationDto().getLongitud() != null ? dto.getLocationDto().getLongitud() : 0.0);
+        location.setLatitud(dto.getLocationCreateDto().getLatitud() != null ? dto.getLocationCreateDto().getLatitud() : 0.0);
+        location.setLongitud(dto.getLocationCreateDto().getLongitud() != null ? dto.getLocationCreateDto().getLongitud() : 0.0);
         restaurant.setLocation(location);
 
         if (dto.getImage() != null && !dto.getImage().isEmpty()) {
@@ -226,13 +226,13 @@ public class RestaurantService {
             restaurant.setCategory(dto.getCategory());
         }
 
-        if (dto.getLocationDto() != null) {
+        if (dto.getLocationCreateDto() != null) {
             Location location = restaurant.getLocation();
-            if (dto.getLocationDto().getLatitud() != null) {
-                location.setLatitud(dto.getLocationDto().getLatitud());
+            if (dto.getLocationCreateDto().getLatitud() != null) {
+                location.setLatitud(dto.getLocationCreateDto().getLatitud());
             }
-            if (dto.getLocationDto().getLongitud() != null) {
-                location.setLongitud(dto.getLocationDto().getLongitud());
+            if (dto.getLocationCreateDto().getLongitud() != null) {
+                location.setLongitud(dto.getLocationCreateDto().getLongitud());
             }
         }
 
