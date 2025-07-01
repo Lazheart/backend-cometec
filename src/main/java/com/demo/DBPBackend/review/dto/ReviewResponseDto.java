@@ -3,12 +3,15 @@ package com.demo.DBPBackend.review.dto;
 import com.demo.DBPBackend.comment.dto.CommentRequestDto;
 import com.demo.DBPBackend.comment.dto.CommentResponseDto;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 public class ReviewResponseDto {
     private Long id;
     private String content;

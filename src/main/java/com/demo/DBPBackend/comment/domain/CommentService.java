@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -127,7 +125,15 @@ public class CommentService {
     }
 
     @Transactional
-    public void createComment(CommentRequestDto dto) {
+    public CommentResponseDto createComment(CommentRequestDto dto) {
+        if (dto.getReviewId() == null) {
+            throw new ResourceNotFoundException("Review is required");
+        }
+
+        if (dto.getContent() == null || dto.getContent().isEmpty()) {
+            throw new ResourceNotFoundException("Comment content is required");
+        }
+
         Review review = reviewRepository.findById(dto.getReviewId())
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
 
@@ -141,11 +147,12 @@ public class CommentService {
         comment.setUser(user);
         comment.setCreatedAt(LocalDateTime.now());
 
-        commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(comment);
+        return toCommentResponseDto(savedComment);
     }
 
     @Transactional
-    public void updateComment(Long id, String content) {
+    public CommentResponseDto updateComment(Long id, CommentRequestDto dto) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
 
@@ -157,8 +164,9 @@ public class CommentService {
             throw new UnauthorizedOperationException("You are not authorized to update this comment");
         }
 
-        comment.setContent(content);
+        comment.setContent(dto.getContent());
         commentRepository.save(comment);
+        return toCommentResponseDto(comment);
     }
 
     @Transactional
@@ -192,7 +200,6 @@ public class CommentService {
         dto.setReviewId(comment.getReview().getId());
         dto.setUserId(comment.getUser().getId());
         dto.setUserName(comment.getUser().getName());
-        dto.setUserLastname(comment.getUser().getLastname());
         dto.setCreatedAt(comment.getCreatedAt());
         return dto;
     }

@@ -11,6 +11,5 @@ public class CommentResponseDto {
     private Long reviewId;
     private Long userId;
     private String userName;
-    private String userLastname;
     private LocalDateTime createdAt;
 }

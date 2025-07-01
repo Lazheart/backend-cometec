@@ -1,9 +1,10 @@
 package com.demo.DBPBackend.review.dto;
 
-import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Setter
+@Getter
 public class ReviewRequestDto {
     private Long userId;
     private Long restaurantId;

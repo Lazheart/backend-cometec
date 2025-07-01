@@ -2,8 +2,12 @@ package com.demo.DBPBackend.user.dto;
 
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+
 public class UserSummaryDto {
     private Long id;
     private String name;

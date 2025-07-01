@@ -1,8 +1,11 @@
 package com.demo.DBPBackend.review.dto;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class ReviewUpdateContentDto {
     private String content;
 }

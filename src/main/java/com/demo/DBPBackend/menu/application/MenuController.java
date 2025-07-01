@@ -11,46 +11,37 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/menu")
 @RequiredArgsConstructor
+@RequestMapping("/menus")
 public class MenuController {
 
     private final MenuService menuService;
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<Page<MenuResponseDto>> getAllMenus(@RequestParam(defaultValue = "0") int page,
                                                              @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(menuService.getAllMenus(page, size));
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<MenuResponseDto> getMenuById(@PathVariable Long id) {
         return ResponseEntity.ok(menuService.getMenuById(id));
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @GetMapping("/restaurant/{restaurantId}")
-    public ResponseEntity<MenuResponseDto> getMenuByRestaurant(@PathVariable Long restaurantId) {
-        return ResponseEntity.ok(menuService.getMenuByRestaurantId(restaurantId));
-    }
-
-    @PreAuthorize("hasRole('OWNER')")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<Void> createMenu(@RequestBody MenuRequestDto dto) {
-        menuService.createMenu(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<MenuResponseDto> createMenu(@RequestBody MenuRequestDto menuRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(menuService.createMenu(menuRequestDto));
     }
 
-    @PreAuthorize("hasRole('OWNER')")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateMenu(@PathVariable Long id, @RequestBody MenuRequestDto dto) {
-        menuService.updateMenu(id, dto);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<MenuResponseDto> updateMenu(@PathVariable Long id,
+                                                      @RequestBody MenuRequestDto menuRequestDto) {
+        return ResponseEntity.ok(menuService.updateMenu(id, menuRequestDto));
     }
 
-    @PreAuthorize("hasRole('OWNER')")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMenu(@PathVariable Long id) {
         menuService.deleteMenu(id);

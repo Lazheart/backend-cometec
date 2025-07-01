@@ -2,8 +2,11 @@ package com.demo.DBPBackend.auth.dto;
 
 import com.demo.DBPBackend.user.domain.Role;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class RegisterDto {
     private String email;
     private String password;

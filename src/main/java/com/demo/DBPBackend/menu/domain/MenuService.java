@@ -43,10 +43,14 @@ public class MenuService {
 
     // Métodos originales sin cambios
     @Transactional
-    public void createMenu(MenuRequestDto dto) {
+    public MenuResponseDto createMenu(MenuRequestDto dto) {
         String email = authUtils.getCurrentUserEmail();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (dto.getRestaurantId() == null) {
+            throw new ResourceNotFoundException("Restaurant ID is required");
+        }
 
         Restaurant restaurant = restaurantRepository.findById(dto.getRestaurantId())
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
@@ -64,15 +68,18 @@ public class MenuService {
             List<Dish> dishes = dto.getDishes().stream()
                     .map(dishDto -> {
                         Dish dish = new Dish();
-                        dish.setName(dishDto.getName());
-                        dish.setDescription(dishDto.getDescription());
-                        dish.setPrice(dishDto.getPrice());
-                        dish.setMenu(finalMenu);  // Asignar el objeto Menu, no el ID
+                        dish.setName(dishDto.getName() != null ? dishDto.getName() : "Unnamed Dish");
+                        dish.setDescription(dishDto.getDescription() != null ? dishDto.getDescription() : "");
+                        dish.setPrice(dishDto.getPrice() != null ? dishDto.getPrice() : 0.0);
+                        dish.setCategory(dishDto.getCategory() != null ? dishDto.getCategory() : com.demo.DBPBackend.dish.domain.DishCategory.OTHER);
+                        dish.setMenu(finalMenu);
                         return dish;
                     })
                     .collect(Collectors.toList());
             dishRepository.saveAll(dishes);
         }
+
+        return toMenuResponseDto(menu);
     }
 
     public MenuResponseDto getMenuById(Long id) {
@@ -110,7 +117,7 @@ public class MenuService {
     }
 
     @Transactional
-    public void updateMenu(Long id, MenuRequestDto dto) {
+    public MenuResponseDto updateMenu(Long id, MenuRequestDto dto) {
         Menu menu = menuRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Menu not found"));
 
@@ -126,9 +133,10 @@ public class MenuService {
             List<Dish> newDishes = dto.getDishes().stream()
                     .map(dishDto -> {
                         Dish dish = new Dish();
-                        dish.setName(dishDto.getName());
-                        dish.setDescription(dishDto.getDescription());
-                        dish.setPrice(dishDto.getPrice());
+                        dish.setName(dishDto.getName() != null ? dishDto.getName() : "Unnamed Dish");
+                        dish.setDescription(dishDto.getDescription() != null ? dishDto.getDescription() : "");
+                        dish.setPrice(dishDto.getPrice() != null ? dishDto.getPrice() : 0.0);
+                        dish.setCategory(dishDto.getCategory() != null ? dishDto.getCategory() : com.demo.DBPBackend.dish.domain.DishCategory.OTHER);
                         dish.setMenu(menu);
                         return dish;
                     })
@@ -136,6 +144,8 @@ public class MenuService {
 
             dishRepository.saveAll(newDishes);
         }
+
+        return toMenuResponseDto(menu);
     }
 
     @Transactional
@@ -155,6 +165,23 @@ public class MenuService {
         dto.setId(dish.getId());
         dto.setName(dish.getName());
         dto.setPrice(dish.getPrice());
+        dto.setCategory(dish.getCategory());
+        return dto;
+    }
+
+    // Método auxiliar para paginación
+    private MenuResponseDto toMenuResponseDto(Menu menu) {
+        MenuResponseDto dto = new MenuResponseDto();
+        dto.setId(menu.getId());
+        dto.setRestaurantId(menu.getRestaurant().getId());
+        dto.setRestaurantName(menu.getRestaurant().getName());
+        
+        // Mapear las entidades Dish a DTOs DishSummaryDto
+        List<DishSummaryDto> dishSummaries = menu.getDishes().stream()
+            .map(this::toDishSummary)
+            .collect(Collectors.toList());
+        dto.setDishes(dishSummaries);
+        
         return dto;
     }
 

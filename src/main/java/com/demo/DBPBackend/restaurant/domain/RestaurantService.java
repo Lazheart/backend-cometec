@@ -15,8 +15,10 @@ import com.demo.DBPBackend.location.domain.Location;
 import com.demo.DBPBackend.location.dto.LocationDto;
 import com.demo.DBPBackend.user.domain.User;
 import com.demo.DBPBackend.user.infrastructure.UserRepository;
+import com.demo.DBPBackend.localMediaStorage.domain.MediaStorageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +29,8 @@ import java.text.Normalizer;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.demo.DBPBackend.user.domain.Role;
+
 @Service
 @RequiredArgsConstructor
 public class RestaurantService {
@@ -34,6 +38,7 @@ public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
     private final AuthUtils authUtils;
+    private final MediaStorageService mediaStorageService;
 
     public Page<RestaurantSummaryDto> getAllRestaurants(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -50,7 +55,7 @@ public class RestaurantService {
 
     public Page<RestaurantSummaryDto> getRestaurantsByOwnerId(Long ownerId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Restaurant> restaurants = restaurantRepository.findByOwnerIdOrderByIdDesc(ownerId, pageable);
+        Page<Restaurant> restaurants = restaurantRepository.findByOwnerId(ownerId, pageable);
         return restaurants.map(this::toRestaurantSummary);
     }
 
@@ -63,6 +68,24 @@ public class RestaurantService {
     public Page<RestaurantSummaryDto> getAllRestaurantsOrderedById(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Restaurant> restaurants = restaurantRepository.findAllByOrderByIdDesc(pageable);
+        return restaurants.map(this::toRestaurantSummary);
+    }
+
+    public Page<RestaurantSummaryDto> getRestaurantsByCategory(RestaurantCategory category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Restaurant> restaurants = restaurantRepository.findByCategory(category, pageable);
+        return restaurants.map(this::toRestaurantSummary);
+    }
+
+    public Page<RestaurantSummaryDto> getRestaurantsByCategoryOrderedByName(RestaurantCategory category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Restaurant> restaurants = restaurantRepository.findByCategoryOrderByNameAsc(category, pageable);
+        return restaurants.map(this::toRestaurantSummary);
+    }
+
+    public Page<RestaurantSummaryDto> getRestaurantsByCategoryOrderedById(RestaurantCategory category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Restaurant> restaurants = restaurantRepository.findByCategoryOrderByIdDesc(category, pageable);
         return restaurants.map(this::toRestaurantSummary);
     }
 
@@ -147,14 +170,38 @@ public class RestaurantService {
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        // Cambiar el rol a OWNER si es USER
+        if (currentUser.getRole() == Role.USER) {
+            currentUser.setRole(Role.OWNER);
+            userRepository.save(currentUser);
+        }
+
+        if (dto.getName() == null || dto.getName().isEmpty()) {
+            throw new ResourceNotFoundException("Restaurant name is required");
+        }
+
+        if (dto.getLocationDto() == null) {
+            throw new ResourceNotFoundException("Location is required");
+        }
+
         Restaurant restaurant = new Restaurant();
         restaurant.setName(dto.getName());
+        restaurant.setCategory(dto.getCategory() != null ? dto.getCategory() : RestaurantCategory.OTHER);
         restaurant.setOwner(currentUser);
 
         Location location = new Location();
-        location.setLatitud(dto.getLocationDto().getLatitud());
-        location.setLongitud(dto.getLocationDto().getLongitud());
+        location.setLatitud(dto.getLocationDto().getLatitud() != null ? dto.getLocationDto().getLatitud() : 0.0);
+        location.setLongitud(dto.getLocationDto().getLongitud() != null ? dto.getLocationDto().getLongitud() : 0.0);
         restaurant.setLocation(location);
+
+        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
+            try {
+                String imageUrl = mediaStorageService.uploadFile(dto.getImage());
+                restaurant.setImageUrl(imageUrl);
+            } catch (FileUploadException e) {
+                throw new RuntimeException("Error uploading restaurant image: " + e.getMessage());
+            }
+        }
 
         Restaurant savedRestaurant = restaurantRepository.save(restaurant);
 
@@ -170,11 +217,32 @@ public class RestaurantService {
             throw new UnauthorizedOperationException("You are not authorized to update this restaurant");
         }
 
-        restaurant.setName(dto.getName());
+        if (dto.getName() != null && !dto.getName().isEmpty()) {
+            restaurant.setName(dto.getName());
+        }
+        
+        if (dto.getCategory() != null) {
+            restaurant.setCategory(dto.getCategory());
+        }
 
-        Location location = restaurant.getLocation();
-        location.setLatitud(dto.getLocationDto().getLatitud());
-        location.setLongitud(dto.getLocationDto().getLongitud());
+        if (dto.getLocationDto() != null) {
+            Location location = restaurant.getLocation();
+            if (dto.getLocationDto().getLatitud() != null) {
+                location.setLatitud(dto.getLocationDto().getLatitud());
+            }
+            if (dto.getLocationDto().getLongitud() != null) {
+                location.setLongitud(dto.getLocationDto().getLongitud());
+            }
+        }
+
+        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
+            try {
+                String imageUrl = mediaStorageService.uploadFile(dto.getImage());
+                restaurant.setImageUrl(imageUrl);
+            } catch (FileUploadException e) {
+                throw new RuntimeException("Error uploading restaurant image: " + e.getMessage());
+            }
+        }
 
         restaurantRepository.save(restaurant);
     }
@@ -202,9 +270,13 @@ public class RestaurantService {
         RestaurantSummaryDto dto = new RestaurantSummaryDto();
         dto.setId(restaurant.getId());
         dto.setName(restaurant.getName());
+        dto.setCategory(restaurant.getCategory());
+        dto.setOwnerId(restaurant.getOwner().getId());
         dto.setOwnerName(restaurant.getOwner().getName());
         dto.setLocationDto(toLocationDto(restaurant.getLocation()));
         dto.setTotalReviews(restaurant.getValoraciones().size());
+        dto.setHasMenu(restaurant.getMenu() != null);
+        dto.setImageUrl(restaurant.getImageUrl());
         return dto;
     }
 
@@ -212,11 +284,13 @@ public class RestaurantService {
         RestaurantResponseDto dto = new RestaurantResponseDto();
         dto.setId(restaurant.getId());
         dto.setName(restaurant.getName());
+        dto.setCategory(restaurant.getCategory());
         dto.setOwnerId(restaurant.getOwner().getId());
         dto.setOwnerName(restaurant.getOwner().getName());
         dto.setLocationDto(toLocationDto(restaurant.getLocation()));
         dto.setTotalReviews(restaurant.getValoraciones().size());
         dto.setHasMenu(restaurant.getMenu() != null);
+        dto.setImageUrl(restaurant.getImageUrl());
         return dto;
     }
 
@@ -224,11 +298,9 @@ public class RestaurantService {
         ReviewResponseDto dto = new ReviewResponseDto();
         dto.setId(review.getId());
         dto.setContent(review.getContent());
-        //dto.setRating(review.getRating());
         dto.setRestaurantId(review.getRestaurant().getId());
         dto.setUserId(review.getUser().getId());
         dto.setUserName(review.getUser().getName());
-        dto.setUserLastname(review.getUser().getLastname());
         dto.setCreatedAt(review.getCreatedAt());
         return dto;
     }
@@ -240,7 +312,6 @@ public class RestaurantService {
         dto.setReviewId(comment.getReview().getId());
         dto.setUserId(comment.getUser().getId());
         dto.setUserName(comment.getUser().getName());
-        dto.setUserLastname(comment.getUser().getLastname());
         dto.setCreatedAt(comment.getCreatedAt());
         return dto;
     }

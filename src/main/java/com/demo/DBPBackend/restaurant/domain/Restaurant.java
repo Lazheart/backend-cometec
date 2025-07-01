@@ -31,6 +31,10 @@ public class Restaurant {
     @NotBlank
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RestaurantCategory category = RestaurantCategory.OTHER;
+
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
@@ -39,7 +43,7 @@ public class Restaurant {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "menu_id", unique = true)
     private Menu menu;
 
@@ -48,5 +52,7 @@ public class Restaurant {
 
     @ManyToMany(mappedBy = "favouriteRestaurants")
     private List<User> favouritedBy = new ArrayList<>();
+
+    private String imageUrl;
 
 }
