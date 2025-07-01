@@ -3,6 +3,7 @@ package com.demo.DBPBackend;
 import com.demo.DBPBackend.exceptions.ResourceNotFoundException;
 import com.demo.DBPBackend.exceptions.UnauthorizedOperationException;
 import com.demo.DBPBackend.exceptions.UserAlreadyExistException;
+import com.demo.DBPBackend.exceptions.InvalidCategoryException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,6 +29,12 @@ public class GlobalErrorHandler {
     @ExceptionHandler(UserAlreadyExistException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public String handleUserAlreadyExist(UserAlreadyExistException ex) {
+        return ex.getMessage();
+    }
+
+    @ExceptionHandler(InvalidCategoryException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleInvalidCategoryException(InvalidCategoryException ex) {
         return ex.getMessage();
     }
 
