@@ -9,4 +9,5 @@ public class ReviewRequestDto {
     private Long userId;
     private Long restaurantId;
     private String content;
+    private Integer rating;
 }

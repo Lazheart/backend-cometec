@@ -99,6 +99,7 @@ public class ReviewService {
         review.setRestaurant(restaurant);
         review.setCreatedAt(LocalDateTime.now());
         review.setLikes(0);
+        review.setRating(reviewRequestDto.getRating() != null ? reviewRequestDto.getRating() : 0);
 
         Review savedReview = reviewRepository.save(review);
         return getReviewResponseDto(savedReview);
@@ -184,6 +185,7 @@ public class ReviewService {
         reviewResponseDto.setContent(review.getContent());
         reviewResponseDto.setLikes(review.getLikes());
         reviewResponseDto.setCreatedAt(review.getCreatedAt());
+        reviewResponseDto.setRating(review.getRating());
         reviewResponseDto.setLikedByUserIds(review.getLikedBy().stream()
                 .map(User::getId)
                 .collect(Collectors.toSet()));

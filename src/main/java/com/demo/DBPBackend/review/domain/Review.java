@@ -37,6 +37,11 @@ public class Review {
     @Min(0)
     private Integer likes = 0;
 
+    @NotNull
+    @Min(0)
+    @Max(5)
+    private Integer rating = 0;
+
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

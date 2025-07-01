@@ -34,6 +34,10 @@ import java.text.Normalizer;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.demo.DBPBackend.user.dto.UserSecurityUpdateDto;
+import com.demo.DBPBackend.auth.domain.RecoveryCodeStore;
+import com.demo.DBPBackend.auth.dto.RecoveryResponseDto;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -45,6 +49,7 @@ public class UserService {
     private final RestaurantRepository restaurantRepository;
     private final ReviewRepository reviewRepository;
     private final CommentRepository commentRepository;
+    private final RecoveryCodeStore recoveryCodeStore;
 
     public UserResponseDto getMe() {
         String email = authorizationUtils.getCurrentUserEmail();
@@ -360,5 +365,26 @@ public class UserService {
         return userPage.map(this::toUserResponseDto);
     }
 
+    public RecoveryResponseDto updatePasswordWithCode(UserSecurityUpdateDto dto) {
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        if (!recoveryCodeStore.isValid(dto.getEmail(), dto.getSecurityCode())) {
+            throw new IllegalArgumentException("Código de seguridad inválido o expirado");
+        }
+        if (!isValidPassword(dto.getNewPassword())) {
+            throw new IllegalArgumentException("La contraseña no cumple los requisitos de seguridad");
+        }
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        userRepository.save(user);
+        recoveryCodeStore.invalidate(dto.getEmail());
+        return new RecoveryResponseDto("Contraseña actualizada correctamente");
+    }
+
+    private boolean isValidPassword(String password) {
+        // Al menos 8 caracteres, una mayúscula, un número
+        return password != null && password.length() >= 8 &&
+                password.matches(".*[A-Z].*") &&
+                password.matches(".*[0-9].*");
+    }
 
 }
