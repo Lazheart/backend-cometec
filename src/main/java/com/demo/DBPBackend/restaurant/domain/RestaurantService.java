@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.demo.DBPBackend.user.domain.Role;
+import com.demo.DBPBackend.exceptions.InvalidCategoryException;
 
 @Service
 @RequiredArgsConstructor
@@ -321,5 +322,23 @@ public class RestaurantService {
         dto.setLatitud(location.getLatitud());
         dto.setLongitud(location.getLongitud());
         return dto;
+    }
+
+    /**
+     * Valida si una categoría es válida y la convierte a RestaurantCategory
+     * @param categoryString La categoría como string
+     * @return RestaurantCategory válido
+     * @throws InvalidCategoryException si la categoría no es válida
+     */
+    public RestaurantCategory validateAndParseCategory(String categoryString) {
+        try {
+            return RestaurantCategory.valueOf(categoryString.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            String validCategories = String.join(", ", 
+                java.util.Arrays.stream(RestaurantCategory.values())
+                    .map(Enum::name)
+                    .toArray(String[]::new));
+            throw new InvalidCategoryException(categoryString, validCategories);
+        }
     }
 }

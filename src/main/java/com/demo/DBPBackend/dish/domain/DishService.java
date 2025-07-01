@@ -178,15 +178,13 @@ public class DishService {
             dish.setPrice(dto.getPrice());
         }
         
-        if (dto instanceof DishRequestDto) {
-            DishRequestDto req = (DishRequestDto) dto;
-            if (req.getImage() != null && !req.getImage().isEmpty()) {
-                try {
-                    String imageUrl = mediaStorageService.uploadFile(req.getImage());
-                    dish.setImageUrl(imageUrl);
-                } catch (FileUploadException e) {
-                    throw new RuntimeException("Error uploading dish image: " + e.getMessage());
-                }
+        // Manejar la imagen si se proporciona
+        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
+            try {
+                String imageUrl = mediaStorageService.uploadFile(dto.getImage());
+                dish.setImageUrl(imageUrl);
+            } catch (FileUploadException e) {
+                throw new RuntimeException("Error uploading dish image: " + e.getMessage());
             }
         }
         

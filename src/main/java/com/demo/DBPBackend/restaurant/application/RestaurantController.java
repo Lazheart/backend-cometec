@@ -8,6 +8,7 @@ import com.demo.DBPBackend.restaurant.dto.RestaurantResponseDto;
 import com.demo.DBPBackend.restaurant.dto.RestaurantSummaryDto;
 import com.demo.DBPBackend.review.dto.ReviewResponseDto;
 import com.demo.DBPBackend.comment.dto.CommentResponseDto;
+import com.demo.DBPBackend.exceptions.InvalidCategoryException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -22,12 +23,15 @@ public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
     public ResponseEntity<Page<RestaurantSummaryDto>> getAllRestaurants(@RequestParam(defaultValue = "0") int page,
                                                                         @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(restaurantService.getAllRestaurants(page, size));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<RestaurantResponseDto> getRestaurantById(@PathVariable Long id) {
         return ResponseEntity.ok(restaurantService.getRestaurantById(id));
@@ -35,10 +39,11 @@ public class RestaurantController {
 
     @PreAuthorize("hasAnyRole('OWNER', 'USER')")
     @GetMapping("/category/{category}")
-    public ResponseEntity<Page<RestaurantSummaryDto>> getRestaurantsByCategory(@PathVariable RestaurantCategory category,
+    public ResponseEntity<Page<RestaurantSummaryDto>> getRestaurantsByCategory(@PathVariable String category,
                                                                                @RequestParam(defaultValue = "0") int page,
                                                                                @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(restaurantService.getRestaurantsByCategory(category, page, size));
+        RestaurantCategory restaurantCategory = restaurantService.validateAndParseCategory(category);
+        return ResponseEntity.ok(restaurantService.getRestaurantsByCategory(restaurantCategory, page, size));
     }
 
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")

@@ -39,8 +39,8 @@ public class DishController {
 
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @PatchMapping("/{id}")
-    public ResponseEntity<DishResponseDto> updateDish(@PathVariable Long id, @ModelAttribute DishRequestDto dishRequestDto) {
-        return ResponseEntity.ok(dishService.updateDish(id, dishRequestDto));
+    public ResponseEntity<DishResponseDto> updateDish(@PathVariable Long id, @ModelAttribute DishUpdateRequestDto dishUpdateRequestDto) {
+        return ResponseEntity.ok(dishService.updateDish(id, dishUpdateRequestDto));
     }
 
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
