@@ -9,6 +9,8 @@ import com.demo.DBPBackend.user.dto.UserPublicUpdateDto;
 import com.demo.DBPBackend.user.dto.UserRequestDto;
 import com.demo.DBPBackend.user.dto.UserResponseDto;
 import com.demo.DBPBackend.user.dto.UserUpdateProfileImageDto;
+import com.demo.DBPBackend.user.dto.UserSecurityUpdateDto;
+import com.demo.DBPBackend.auth.dto.RecoveryResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,9 +49,8 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
     @PatchMapping("/security/me")
-    public ResponseEntity<Void> updateCredentials(@ModelAttribute UserRequestDto updatedUser) {
-        userService.updateUser(updatedUser);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<RecoveryResponseDto> updatePasswordWithCode(@Valid @RequestBody UserSecurityUpdateDto dto) {
+        return ResponseEntity.ok(userService.updatePasswordWithCode(dto));
     }
 
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
