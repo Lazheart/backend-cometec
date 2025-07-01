@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/restaurants")
@@ -88,5 +90,11 @@ public class RestaurantController {
     public ResponseEntity<Void> updateRestaurant(@PathVariable Long id, @ModelAttribute RestaurantRequestDto restaurantRequestDto) {
         restaurantService.updateRestaurant(id, restaurantRequestDto);
         return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAnyRole('OWNER', 'USER', 'ADMIN')")
+    @GetMapping("/top")
+    public ResponseEntity<List<RestaurantSummaryDto>> getTop3Restaurants() {
+        return ResponseEntity.ok(restaurantService.getTop3RestaurantsByRating());
     }
 }

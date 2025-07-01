@@ -22,12 +22,10 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /*
     @NotNull
     @Min(0)
     @Max(5)
     private Integer calificacion = 0;
-*/
 
     @NotBlank
     @Size(max = 500)

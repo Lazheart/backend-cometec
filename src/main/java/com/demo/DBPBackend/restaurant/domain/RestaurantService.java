@@ -341,4 +341,24 @@ public class RestaurantService {
             throw new InvalidCategoryException(categoryString, validCategories);
         }
     }
+
+    /**
+     * Devuelve el top 3 de restaurantes con mejor valoración promedio.
+     * Solo incluye id, nombre, categoría e imagen.
+     */
+    public List<RestaurantSummaryDto> getTop3RestaurantsByRating() {
+        // Obtener todos los restaurantes
+        List<Restaurant> allRestaurants = restaurantRepository.findAll();
+        // Calcular el promedio de valoraciones para cada restaurante
+        return allRestaurants.stream()
+                .filter(r -> r.getValoraciones() != null && !r.getValoraciones().isEmpty())
+                .sorted((r1, r2) -> {
+                    double avg1 = r1.getValoraciones().stream().mapToDouble(Review::getCalificacion).average().orElse(0);
+                    double avg2 = r2.getValoraciones().stream().mapToDouble(Review::getCalificacion).average().orElse(0);
+                    return Double.compare(avg2, avg1); // Descendente
+                })
+                .limit(3)
+                .map(this::toRestaurantSummary)
+                .collect(Collectors.toList());
+    }
 }
