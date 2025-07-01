@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/locations")
 @RequiredArgsConstructor
@@ -44,6 +46,15 @@ public class LocationController {
     public ResponseEntity<Void> deleteLocation(@PathVariable Long locationId) {
         locationService.deleteLocation(locationId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/nearby")
+    public ResponseEntity<List<LocationDto>> getNearbyLocations(
+            @RequestParam double latitud,
+            @RequestParam double longitud,
+            @RequestParam double radioKm) {
+        List<LocationDto> locations = locationService.getNearbyLocations(latitud, longitud, radioKm);
+        return ResponseEntity.ok(locations);
     }
 }
 

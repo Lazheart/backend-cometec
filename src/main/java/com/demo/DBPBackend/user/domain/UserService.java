@@ -78,6 +78,10 @@ public class UserService {
             existingUser.setName(updatedUser.getName());
         }
 
+        if (updatedUser.getLastname() != null && !updatedUser.getLastname().isEmpty()) {
+            existingUser.setLastname(updatedUser.getLastname());
+        }
+
         if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
             String encodedPassword = passwordEncoder.encode(updatedUser.getPassword());
             existingUser.setPassword(encodedPassword);
@@ -85,6 +89,10 @@ public class UserService {
 
         if (updatedUser.getEmail() != null && !updatedUser.getEmail().isEmpty()) {
             existingUser.setEmail(updatedUser.getEmail());
+        }
+
+        if (updatedUser.getPhone() != null && !updatedUser.getPhone().isEmpty()) {
+            existingUser.setPhone(updatedUser.getPhone());
         }
 
         userRepository.save(existingUser);

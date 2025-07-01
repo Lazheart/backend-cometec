@@ -79,4 +79,33 @@ public class LocationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Ubicación no encontrada con ID: " + locationId));
         locationRepository.delete(location);
     }
+
+    public List<LocationDto> getNearbyLocations(double latitud, double longitud, double radioKm) {
+        List<Location> allLocations = locationRepository.findAll();
+        return allLocations.stream()
+                .filter(loc -> haversine(latitud, longitud, loc.getLatitud(), loc.getLongitud()) <= radioKm)
+                .map(loc -> {
+                    LocationDto dto = new LocationDto();
+                    dto.setId(loc.getId());
+                    dto.setLatitud(loc.getLatitud());
+                    dto.setLongitud(loc.getLongitud());
+                    if (loc.getRestaurant() != null) {
+                        dto.setRestaurantId(loc.getRestaurant().getId());
+                        dto.setRestaurantName(loc.getRestaurant().getName());
+                    }
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private double haversine(double lat1, double lon1, double lat2, double lon2) {
+        final int R = 6371; // Radio de la tierra en km
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
 }
