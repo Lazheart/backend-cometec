@@ -169,7 +169,6 @@ public class MenuService {
         return dto;
     }
 
-    // Método auxiliar para paginación
     private MenuResponseDto toMenuResponseDto(Menu menu) {
         MenuResponseDto dto = new MenuResponseDto();
         dto.setId(menu.getId());
@@ -185,19 +184,5 @@ public class MenuService {
         return dto;
     }
 
-    // Método auxiliar para paginación
-    private MenuResponseDto toMenuResponseDto(Menu menu) {
-        MenuResponseDto dto = new MenuResponseDto();
-        dto.setId(menu.getId());
-        dto.setRestaurantId(menu.getRestaurant().getId());
-        dto.setRestaurantName(menu.getRestaurant().getName());
-        
-        // Mapear las entidades Dish a DTOs DishSummaryDto
-        List<DishSummaryDto> dishSummaries = menu.getDishes().stream()
-            .map(this::toDishSummary)
-            .collect(Collectors.toList());
-        dto.setDishes(dishSummaries);
-        
-        return dto;
-    }
+
 }
