@@ -37,6 +37,7 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/user/security/me").permitAll() // <-- Agrega esta línea
                         .requestMatchers("/user/expo-token/**").permitAll()
                         .anyRequest().authenticated()
                 )

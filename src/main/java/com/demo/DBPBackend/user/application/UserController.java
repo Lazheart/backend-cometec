@@ -47,9 +47,9 @@ public class UserController {
         return ResponseEntity.ok(userService.getMe());
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
+    //@PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
     @PatchMapping("/security/me")
-    public ResponseEntity<RecoveryResponseDto> updatePasswordWithCode(@Valid @RequestBody UserSecurityUpdateDto dto) {
+    public ResponseEntity<RecoveryResponseDto> updatePasswordWithCode(@RequestBody UserSecurityUpdateDto dto) {
         return ResponseEntity.ok(userService.updatePasswordWithCode(dto));
     }
 
