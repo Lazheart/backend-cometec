@@ -1,4 +1,4 @@
-package com.demo.DBPBackend.email.domain;
+apackage com.demo.DBPBackend.email.domain;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -36,5 +36,19 @@ public class EmailService {
         helper.setSubject("Bienvenido a ComeTec!!!");
 
         mailSender.send(message);
+    }
+
+    public void sendRecoveryCode(String to, String code) {
+        // Envío simple, puedes mejorar con plantilla HTML si lo deseas
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+            helper.setTo(to);
+            helper.setSubject("Recuperación de contraseña - ComeTec");
+            helper.setText("Tu código de recuperación es: " + code, false);
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new RuntimeException("No se pudo enviar el correo de recuperación", e);
+        }
     }
 }

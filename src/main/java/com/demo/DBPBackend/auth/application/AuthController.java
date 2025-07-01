@@ -5,12 +5,15 @@ import com.demo.DBPBackend.auth.dto.JwtAuthResponseDto;
 import com.demo.DBPBackend.auth.dto.LoginDto;
 import com.demo.DBPBackend.auth.dto.RegisterDto;
 import com.demo.DBPBackend.auth.dto.UserPasswordVerificationRequestDto;
+import com.demo.DBPBackend.auth.dto.RecoveryRequestDto;
+import com.demo.DBPBackend.auth.dto.RecoveryResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,5 +36,10 @@ public class AuthController {
     public ResponseEntity<Boolean> verifyPassword(@RequestBody UserPasswordVerificationRequestDto request) {
         boolean isValid = authService.verifyPassword(request.getUserId(), request.getPassword());
         return ResponseEntity.ok(isValid);
+    }
+
+    @PostMapping("/recovery")
+    public ResponseEntity<RecoveryResponseDto> recovery(@Valid @RequestBody RecoveryRequestDto dto) {
+        return ResponseEntity.ok(authService.sendRecoveryCode(dto));
     }
 }
