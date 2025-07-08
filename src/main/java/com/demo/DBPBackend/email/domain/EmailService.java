@@ -1,4 +1,4 @@
-apackage com.demo.DBPBackend.email.domain;
+package com.demo.DBPBackend.email.domain;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
