@@ -11,13 +11,4 @@ public class RecoveryRequestDto {
     @NotBlank
     @Email
     private String email;
-
-    @NotBlank
-    private String name;
-
-    @NotBlank
-    private String lastname;
-
-    @NotBlank
-    private String phone;
-} 
+}

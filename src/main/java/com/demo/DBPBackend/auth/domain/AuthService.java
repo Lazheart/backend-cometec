@@ -77,15 +77,12 @@ public class AuthService {
     }
 
     public RecoveryResponseDto sendRecoveryCode(RecoveryRequestDto dto) {
-        // Validar usuario
-        User user = userRepository.findByEmail(dto.getEmail())
+        // Solo validar existencia del usuario por email, sin asignar variable
+        userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("Email not found"));
-        if (!user.getName().equals(dto.getName()) || !user.getLastname().equals(dto.getLastname()) || !user.getPhone().equals(dto.getPhone())) {
-            throw new IllegalArgumentException("Los datos no coinciden con el usuario");
-        }
         // Generar código de 6 dígitos
         String code = String.format("%06d", new Random().nextInt(999999));
-        recoveryCodeStore.storeCode(dto.getEmail(), code, 10); // 10 minutos de validez
+        recoveryCodeStore.storeCode(dto.getEmail(), code, 3); //  minutos de validez
         emailService.sendRecoveryCode(dto.getEmail(), code);
         return new RecoveryResponseDto("Código enviado al correo");
     }
