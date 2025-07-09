@@ -5,6 +5,8 @@ import com.demo.DBPBackend.auth.dto.LoginDto;
 import com.demo.DBPBackend.auth.dto.RegisterDto;
 import com.demo.DBPBackend.auth.dto.RecoveryRequestDto;
 import com.demo.DBPBackend.auth.dto.RecoveryResponseDto;
+import com.demo.DBPBackend.auth.dto.ResetPasswordRequestDto;
+import com.demo.DBPBackend.auth.dto.VerifyRecoveryCodeRequestDto;
 import com.demo.DBPBackend.conf.JwtService;
 import com.demo.DBPBackend.events.register.RegisterEvent;
 import com.demo.DBPBackend.exceptions.UserAlreadyExistException;
@@ -85,5 +87,26 @@ public class AuthService {
         recoveryCodeStore.storeCode(dto.getEmail(), code, 3); //  minutos de validez
         emailService.sendRecoveryCode(dto.getEmail(), code);
         return new RecoveryResponseDto("Código enviado al correo");
+    }
+
+    public RecoveryResponseDto resetPassword(String email, ResetPasswordRequestDto dto) {
+        // Validar existencia del usuario
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Email not found"));
+        // Validar código
+        if (!recoveryCodeStore.isValid(email, dto.getCode())) {
+            throw new IllegalArgumentException("Código de recuperación inválido o expirado");
+        }
+        // Actualizar contraseña
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        userRepository.save(user);
+        // Eliminar el código usado
+        recoveryCodeStore.invalidate(email);
+        return new RecoveryResponseDto("Contraseña actualizada correctamente");
+    }
+
+    public boolean verifyRecoveryCode(String email, VerifyRecoveryCodeRequestDto dto) {
+        // Verifica si el código es válido para el email
+        return recoveryCodeStore.isValid(email, dto.getCode());
     }
 }
