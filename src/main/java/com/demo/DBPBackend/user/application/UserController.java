@@ -1,5 +1,4 @@
 package com.demo.DBPBackend.user.application;
-
 import com.demo.DBPBackend.comment.dto.CommentResponseDto;
 import com.demo.DBPBackend.restaurant.dto.RestaurantResponseDto;
 import com.demo.DBPBackend.review.dto.ReviewResponseDto;
@@ -77,7 +76,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserComments(page, size));
     }
 
-    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'USER')")
     @GetMapping("/owned-restaurants")
     public ResponseEntity<Page<RestaurantResponseDto>> getOwnedRestaurants(@RequestParam(defaultValue = "0") int page,
                                                                            @RequestParam(defaultValue = "10") int size) {

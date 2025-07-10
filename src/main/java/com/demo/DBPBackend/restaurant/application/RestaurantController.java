@@ -1,5 +1,6 @@
 package com.demo.DBPBackend.restaurant.application;
 
+import com.demo.DBPBackend.comment.dto.CommentResponseDto;
 import com.demo.DBPBackend.menu.dto.MenuResponseDto;
 import com.demo.DBPBackend.restaurant.domain.RestaurantCategory;
 import com.demo.DBPBackend.restaurant.domain.RestaurantService;
@@ -7,8 +8,6 @@ import com.demo.DBPBackend.restaurant.dto.RestaurantRequestDto;
 import com.demo.DBPBackend.restaurant.dto.RestaurantResponseDto;
 import com.demo.DBPBackend.restaurant.dto.RestaurantSummaryDto;
 import com.demo.DBPBackend.review.dto.ReviewResponseDto;
-import com.demo.DBPBackend.comment.dto.CommentResponseDto;
-import com.demo.DBPBackend.exceptions.InvalidCategoryException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -48,7 +47,7 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.getRestaurantsByCategory(restaurantCategory, page, size));
     }
 
-    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN' , 'USER')")
     @PostMapping
     public ResponseEntity<RestaurantResponseDto> createRestaurant(@RequestBody RestaurantRequestDto restaurantRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(restaurantService.createRestaurant(restaurantRequestDto));
