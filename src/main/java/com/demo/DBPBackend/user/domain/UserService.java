@@ -1,8 +1,11 @@
 package com.demo.DBPBackend.user.domain;
 
+import com.demo.DBPBackend.auth.domain.RecoveryCodeStore;
+import com.demo.DBPBackend.auth.dto.RecoveryResponseDto;
 import com.demo.DBPBackend.auth.utils.AuthUtils;
 import com.demo.DBPBackend.comment.domain.Comment;
 import com.demo.DBPBackend.comment.dto.CommentResponseDto;
+import com.demo.DBPBackend.comment.infrastructure.CommentRepository;
 import com.demo.DBPBackend.exceptions.ResourceNotFoundException;
 import com.demo.DBPBackend.exceptions.UnauthorizedOperationException;
 import com.demo.DBPBackend.localMediaStorage.domain.MediaStorageService;
@@ -14,13 +17,8 @@ import com.demo.DBPBackend.restaurant.infrastructure.RestaurantRepository;
 import com.demo.DBPBackend.review.domain.Review;
 import com.demo.DBPBackend.review.dto.ReviewResponseDto;
 import com.demo.DBPBackend.review.infrastructure.ReviewRepository;
-import com.demo.DBPBackend.user.dto.UserPublicUpdateDto;
-import com.demo.DBPBackend.user.dto.UserRequestDto;
-import com.demo.DBPBackend.user.dto.UserResponseDto;
-import com.demo.DBPBackend.user.dto.UserSummaryDto;
-import com.demo.DBPBackend.user.dto.UserUpdateProfileImageDto;
+import com.demo.DBPBackend.user.dto.*;
 import com.demo.DBPBackend.user.infrastructure.UserRepository;
-import com.demo.DBPBackend.comment.infrastructure.CommentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
@@ -33,10 +31,6 @@ import org.springframework.stereotype.Service;
 import java.text.Normalizer;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.demo.DBPBackend.user.dto.UserSecurityUpdateDto;
-import com.demo.DBPBackend.auth.domain.RecoveryCodeStore;
-import com.demo.DBPBackend.auth.dto.RecoveryResponseDto;
 
 @Service
 @RequiredArgsConstructor
@@ -203,6 +197,18 @@ public class UserService {
 
         userRepository.save(user);
 
+        return toUserResponseDto(user);
+    }
+
+    @Transactional
+    public UserResponseDto updateProfileImage(UserUpdateProfileImageDto userUpdateProfileImageDto) throws FileUploadException {
+        String email = authorizationUtils.getCurrentUserEmail();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        String profileImageUrl = mediaStorageService.uploadFile(userUpdateProfileImageDto.getProfileImage());
+        user.setProfileImageUrl(profileImageUrl);
+        userRepository.save(user);
         return toUserResponseDto(user);
     }
 
