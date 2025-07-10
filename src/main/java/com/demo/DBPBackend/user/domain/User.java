@@ -59,7 +59,7 @@ public class User implements UserDetails {
 
     private LocalDateTime createdAt;
 
-    private String profileImageUrl = "https://cometec-storage.s3.amazonaws.com/Default_pfp.svg.png";
+    private String profileImageUrl = "";
 
 
     // 1. Restaurantes de los que es dueño

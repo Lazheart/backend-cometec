@@ -101,7 +101,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @PutMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserResponseDto> updateProfileImage(@ModelAttribute UserUpdateProfileImageDto dto) throws FileUploadException {
         UserResponseDto updatedUser = userService.updateProfileImage(dto);
         return ResponseEntity.ok(updatedUser);
