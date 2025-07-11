@@ -2,35 +2,35 @@ package com.demo.DBPBackend.restaurant.domain;
 
 import com.demo.DBPBackend.auth.utils.AuthUtils;
 import com.demo.DBPBackend.comment.dto.CommentResponseDto;
+import com.demo.DBPBackend.exceptions.InvalidCategoryException;
 import com.demo.DBPBackend.exceptions.ResourceNotFoundException;
 import com.demo.DBPBackend.exceptions.UnauthorizedOperationException;
+import com.demo.DBPBackend.localMediaStorage.domain.MediaStorageService;
+import com.demo.DBPBackend.location.domain.Location;
+import com.demo.DBPBackend.location.dto.LocationDto;
 import com.demo.DBPBackend.menu.dto.MenuResponseDto;
 import com.demo.DBPBackend.restaurant.dto.RestaurantRequestDto;
 import com.demo.DBPBackend.restaurant.dto.RestaurantResponseDto;
 import com.demo.DBPBackend.restaurant.dto.RestaurantSummaryDto;
+import com.demo.DBPBackend.restaurant.dto.RestaurantWithReviewsDto;
 import com.demo.DBPBackend.restaurant.infrastructure.RestaurantRepository;
 import com.demo.DBPBackend.review.domain.Review;
 import com.demo.DBPBackend.review.dto.ReviewResponseDto;
-import com.demo.DBPBackend.location.domain.Location;
-import com.demo.DBPBackend.location.dto.LocationDto;
+import com.demo.DBPBackend.user.domain.Role;
 import com.demo.DBPBackend.user.domain.User;
 import com.demo.DBPBackend.user.infrastructure.UserRepository;
-import com.demo.DBPBackend.localMediaStorage.domain.MediaStorageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.demo.DBPBackend.user.domain.Role;
-import com.demo.DBPBackend.exceptions.InvalidCategoryException;
 
 @Service
 @RequiredArgsConstructor
@@ -360,5 +360,72 @@ public class RestaurantService {
                 .limit(3)
                 .map(this::toRestaurantSummary)
                 .collect(Collectors.toList());
+    }
+
+    public Page<RestaurantSummaryDto> searchRestaurants(String name, String category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        boolean hasName = name != null && !name.isBlank();
+        boolean hasCategory = category != null && !category.isBlank();
+        Page<Restaurant> restaurants;
+        if (hasName && hasCategory) {
+            RestaurantCategory cat = validateAndParseCategory(category);
+            String normalizedName = normalizeText(name);
+            restaurants = restaurantRepository.findByNameContainingAndCategory(normalizedName, cat, pageable);
+        } else if (hasName) {
+            String normalizedName = normalizeText(name);
+            restaurants = restaurantRepository.findByNameContaining(normalizedName, pageable);
+        } else if (hasCategory) {
+            RestaurantCategory cat = validateAndParseCategory(category);
+            restaurants = restaurantRepository.findByCategory(cat, pageable);
+        } else {
+            restaurants = restaurantRepository.findAll(pageable);
+        }
+        return restaurants.map(this::toRestaurantSummary);
+    }
+
+    public List<RestaurantWithReviewsDto> findRestaurantsByNameWithReviews(String name) {
+        String normalizedName = normalizeText(name);
+        List<Restaurant> restaurants = restaurantRepository.findAll().stream()
+                .filter(r -> r.getName().toLowerCase().contains(normalizedName.toLowerCase()))
+                .collect(Collectors.toList());
+        return restaurants.stream().map(r -> {
+            RestaurantWithReviewsDto dto = new RestaurantWithReviewsDto();
+            dto.setId(r.getId());
+            dto.setName(r.getName());
+            dto.setCategory(r.getCategory());
+            dto.setReviews(r.getValoraciones().stream().map(this::toReviewResponse).collect(Collectors.toList()));
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    public List<RestaurantWithReviewsDto> findRestaurantsByCategoryWithReviews(String category) {
+        RestaurantCategory cat = validateAndParseCategory(category);
+        List<Restaurant> restaurants = restaurantRepository.findAll().stream()
+                .filter(r -> r.getCategory() == cat)
+                .collect(Collectors.toList());
+        return restaurants.stream().map(r -> {
+            RestaurantWithReviewsDto dto = new RestaurantWithReviewsDto();
+            dto.setId(r.getId());
+            dto.setName(r.getName());
+            dto.setCategory(r.getCategory());
+            dto.setReviews(r.getValoraciones().stream().map(this::toReviewResponse).collect(Collectors.toList()));
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    public List<RestaurantWithReviewsDto> findRestaurantsByNameAndCategoryWithReviews(String name, String category) {
+        RestaurantCategory cat = validateAndParseCategory(category);
+        String normalizedName = normalizeText(name);
+        List<Restaurant> restaurants = restaurantRepository.findAll().stream()
+                .filter(r -> r.getCategory() == cat && r.getName().toLowerCase().contains(normalizedName.toLowerCase()))
+                .collect(Collectors.toList());
+        return restaurants.stream().map(r -> {
+            RestaurantWithReviewsDto dto = new RestaurantWithReviewsDto();
+            dto.setId(r.getId());
+            dto.setName(r.getName());
+            dto.setCategory(r.getCategory());
+            dto.setReviews(r.getValoraciones().stream().map(this::toReviewResponse).collect(Collectors.toList()));
+            return dto;
+        }).collect(Collectors.toList());
     }
 }

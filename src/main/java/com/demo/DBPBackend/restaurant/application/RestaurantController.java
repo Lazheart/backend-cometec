@@ -8,6 +8,7 @@ import com.demo.DBPBackend.restaurant.dto.RestaurantRequestDto;
 import com.demo.DBPBackend.restaurant.dto.RestaurantResponseDto;
 import com.demo.DBPBackend.restaurant.dto.RestaurantSummaryDto;
 import com.demo.DBPBackend.review.dto.ReviewResponseDto;
+import com.demo.DBPBackend.restaurant.dto.RestaurantWithReviewsDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -95,5 +96,32 @@ public class RestaurantController {
     @GetMapping("/top")
     public ResponseEntity<List<RestaurantSummaryDto>> getTop3Restaurants() {
         return ResponseEntity.ok(restaurantService.getTop3RestaurantsByRating());
+    }
+
+    @PreAuthorize("hasAnyRole('OWNER', 'USER', 'ADMIN')")
+    @GetMapping("/search")
+    public ResponseEntity<Page<RestaurantSummaryDto>> searchRestaurants(@RequestParam(required = false) String name,
+                                                                       @RequestParam(required = false) String category,
+                                                                       @RequestParam(defaultValue = "0") int page,
+                                                                       @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(restaurantService.searchRestaurants(name, category, page, size));
+    }
+
+    @PreAuthorize("hasAnyRole('OWNER', 'USER', 'ADMIN')")
+    @GetMapping("/find-by-name")
+    public ResponseEntity<List<RestaurantWithReviewsDto>> findRestaurantsByName(@RequestParam String name) {
+        return ResponseEntity.ok(restaurantService.findRestaurantsByNameWithReviews(name));
+    }
+
+    @PreAuthorize("hasAnyRole('OWNER', 'USER', 'ADMIN')")
+    @GetMapping("/find-by-category")
+    public ResponseEntity<List<RestaurantWithReviewsDto>> findRestaurantsByCategory(@RequestParam String category) {
+        return ResponseEntity.ok(restaurantService.findRestaurantsByCategoryWithReviews(category));
+    }
+
+    @PreAuthorize("hasAnyRole('OWNER', 'USER', 'ADMIN')")
+    @GetMapping("/find-by-name-and-category")
+    public ResponseEntity<List<RestaurantWithReviewsDto>> findRestaurantsByNameAndCategory(@RequestParam String name, @RequestParam String category) {
+        return ResponseEntity.ok(restaurantService.findRestaurantsByNameAndCategoryWithReviews(name, category));
     }
 }
